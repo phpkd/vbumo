@@ -2,14 +2,14 @@
 /*============================================================================*\
 || ########################################################################### ||
 || # Product Name: User Moderating Options                    Version: 1.1.0 # ||
-|| # License Number: Commercial License                     $Revision$ # ||
+|| # License Type: Custom Paid License                      $Revision$ # ||
 || # ----------------------------------------------------------------------- # ||
 || #                                                                         # ||
 || #         Copyright ©2005-2008 PHP KingDom. All Rights Reserved.          # ||
 || #   This product may not be redistributed in whole or significant part.   # ||
 || #                                                                         # ||
 || # ----------- 'User Moderating Options' IS NOT FREE SOFTWARE ------------ # ||
-|| #  http://www.phpkd.org | http://www.phpkd.org/info/license/commercial    # ||
+|| #  http://www.phpkd.org | http://www.phpkd.org/info/license/custompaid    # ||
 || ########################################################################### ||
 \*============================================================================*/
 
