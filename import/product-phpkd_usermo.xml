@@ -4,8 +4,8 @@
 	<title><![CDATA[User Moderating Options]]></title>
 	<description><![CDATA[This product allows staff to edit user's avatar, profile picture & signature inside forums without logging AdminCP/ModCP, Administrators also has the ability to control which user groups allowed to edit others avatar, profile picture and signature.]]></description>
 	<version><![CDATA[1.1.0]]></version>
-	<revision><![CDATA[$Revision: 127 $]]></revision>
-	<released><![CDATA[$Date: 2008-07-22 11:41:06 +0300 (Tue, 22 Jul 2008) $]]></released>
+	<revision><![CDATA[$Revision$]]></revision>
+	<released><![CDATA[$Date$]]></released>
 	<url><![CDATA[http://www.phpkd.org/forum/misc.php?do=mods&action=producthelp&pid=phpkd_usermo]]></url>
 	<versioncheckurl><![CDATA[http://www.phpkd.org/forum/misc.php?do=mods&action=productcheck&pid=phpkd_usermo]]></versioncheckurl>
 	<dependencies>

@@ -2,7 +2,7 @@
 /*============================================================================*\
 || ########################################################################### ||
 || # Product Name: User Moderating Options                    Version: 1.1.0 # ||
-|| # License Number: Commercial License                     $Revision: 124 $ # ||
+|| # License Number: Commercial License                     $Revision$ # ||
 || # ----------------------------------------------------------------------- # ||
 || #                                                                         # ||
 || #         Copyright ©2005-2008 PHP KingDom. All Rights Reserved.          # ||
@@ -17,7 +17,7 @@
 error_reporting(E_ALL & ~E_NOTICE);
 
 // ##################### DEFINE IMPORTANT CONSTANTS #######################
-define('CVS_REVISION', '$RCSfile$ - $Revision: 26275 $');
+define('CVS_REVISION', '$RCSfile$ - $Revision$');
 
 // #################### PRE-CACHE TEMPLATES AND DATA ######################
 $phrasegroups = array('logging');
@@ -355,8 +355,8 @@ print_cp_footer();
 /*============================================================================*\
 || ########################################################################### ||
 || # Version: 1.1.0
-|| # $Revision: 124 $
-|| # Released: $Date: 2008-07-22 07:19:36 +0300 (Tue, 22 Jul 2008) $
+|| # $Revision$
+|| # Released: $Date$
 || ########################################################################### ||
 \*============================================================================*/
 ?>
