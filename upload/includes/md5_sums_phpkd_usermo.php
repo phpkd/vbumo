@@ -21,7 +21,7 @@ $md5_sums = array(
 		'functions_usermo_log.php' => '7af669eabf044a5eac3cc5b6dafd7d01',
 	),
 	'/includes/xml' => array(
-		'bitfield_phpkd_usermo.xml' => 'a3637d182eb04d6a1ba23a9ccf030a96',
+		'bitfield_phpkd_usermo.xml' => '69196c665e135f1f56c58998a6964d69',
 		'cpnav_phpkd_usermo.xml' => 'b2c674ed8d45439c7428cfc4e1685096',
 		'hooks_phpkd_usermo.xml' => '6546f5e0e778e5522d64b0963fdd7d02',
 	),
