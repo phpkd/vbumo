@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<navgroups product="phpkd_usermo">
+
+	<navgroup phrase="statistics_and_logs" displayorder="240">
+
+		<navoption displayorder="35">
+			<phrase>phpkd_usermo_log</phrase>
+			<link>usermolog.php?do=choose</link>
+		</navoption>
+
+	</navgroup>
+
+</navgroups>
+
+<!-- Version: 1.1.0 | Revision: $Revision: 123 $ | Released: $Date: 2008-07-22 07:19:36 +0300 (Tue, 22 Jul 2008) $ -->

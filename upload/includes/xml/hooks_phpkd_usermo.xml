@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<hooks>
+
+	<hooktype type="profile">
+		<hook>profile_usermo_editavatar_start</hook>
+		<hook>profile_usermo_editavatar_bit</hook>
+		<hook>profile_usermo_updateavatar_start</hook>
+		<hook>profile_usermo_updateavatar_complete</hook>
+		<hook>profile_usermo_editprofilepic</hook>
+		<hook>profile_usermo_updateprofilepic_start</hook>
+		<hook>profile_usermo_updateprofilepic_complete</hook>
+		<hook>profile_usermo_updatesignature_start</hook>
+		<hook>profile_usermo_updatesignature_complete</hook>
+		<hook>profile_usermo_updatesigpic_start</hook>
+		<hook>profile_usermo_updatesigpic_complete</hook>
+		<hook>profile_usermo_editsignature_start</hook>
+	</hooktype>
+
+	<hooktype type="general">
+		<hook>fetch_usermologtypes</hook>
+		<hook>fetch_usermologactions</hook>
+		<hook>log_usermo_action</hook>
+	</hooktype>
+
+	<hooktype type="generaladmin" admin="1">
+		<hook>admin_usermologviewer_query</hook>
+		<hook>admin_usermologviewer_query_loop</hook>
+		<hook>admin_usermologviewer_query_linkfield</hook>
+	</hooktype>
+
+</hooks>
+
+<!-- Version: 1.1.0 | Revision: $Revision: 123 $ | Released: $Date: 2008-07-22 07:19:36 +0300 (Tue, 22 Jul 2008) $ -->
