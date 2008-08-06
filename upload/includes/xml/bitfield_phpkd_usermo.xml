@@ -4,13 +4,13 @@
 	<bitfielddefs>
 		<group name="ugp">
 			<group name="phpkdusermo">
-				<bitfield name="managed"              group="phpkd_usermo_options" phrase="phpkd_usermo_managed"             >1</bitfield>
-				<bitfield name="managesignature"      group="phpkd_usermo_options" phrase="phpkd_usermo_managesignature"     >2</bitfield>
-				<bitfield name="manageavatar"         group="phpkd_usermo_options" phrase="phpkd_usermo_manageavatar"        >4</bitfield>
-				<bitfield name="manageprofilepicture" group="phpkd_usermo_options" phrase="phpkd_usermo_manageprofilepicture">8</bitfield>
-				<bitfield name="logactions"           group="phpkd_usermo_options" phrase="phpkd_usermo_logactions"          >16</bitfield>
-				<bitfield name="viewlog"              group="phpkd_usermo_options" phrase="phpkd_usermo_viewlog"             >32</bitfield>
-				<bitfield name="prunelog"             group="phpkd_usermo_options" phrase="phpkd_usermo_prunelog"            >64</bitfield>
+				<bitfield name="managed"              group="phpkd_usermo_options" phrase="phpkd_usermo_managed"              >1</bitfield>
+				<bitfield name="managesignature"      group="phpkd_usermo_options" phrase="phpkd_usermo_managesignature"      >2</bitfield>
+				<bitfield name="manageavatar"         group="phpkd_usermo_options" phrase="phpkd_usermo_manageavatar"         >4</bitfield>
+				<bitfield name="manageprofilepicture" group="phpkd_usermo_options" phrase="phpkd_usermo_manageprofilepicture" >8</bitfield>
+				<bitfield name="logactions"           group="phpkd_usermo_options" phrase="phpkd_usermo_logactions"           >16</bitfield>
+				<bitfield name="viewlog"              group="phpkd_usermo_options" phrase="phpkd_usermo_viewlog"              >32</bitfield>
+				<bitfield name="prunelog"             group="phpkd_usermo_options" phrase="phpkd_usermo_prunelog"             >64</bitfield>
 			</group>
 		</group>
 	</bitfielddefs>

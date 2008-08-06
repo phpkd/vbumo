@@ -15,19 +15,19 @@
 
 $md5_sums = array(
 	'/admincp' => array(
-		'usermolog.php' => 'e662344cee35346539a32b568330245f',
+		'usermolog.php' => 'c412687f0ef1eac4fbc1912e7c9f3ba1',
 	),
 	'/includes' => array(
-		'functions_usermo_log.php' => '1a8be4f6a27dc86742be44fc6298ccdf',
+		'functions_usermo_log.php' => '7af669eabf044a5eac3cc5b6dafd7d01',
 	),
 	'/includes/xml' => array(
-		'bitfield_usermo.xml' => 'ef1c152cd5d8d572985120f1d0f7d40c',
-		'cpnav_usermo.xml' => '10db1878ad7b98dcb0a7161885fe5d09',
-		'hooks_usermo.xml' => 'c6046fdc0a3949ef653a1e8b231c6abe',
+		'bitfield_phpkd_usermo.xml' => 'a3637d182eb04d6a1ba23a9ccf030a96',
+		'cpnav_phpkd_usermo.xml' => 'b2c674ed8d45439c7428cfc4e1685096',
+		'hooks_phpkd_usermo.xml' => '6546f5e0e778e5522d64b0963fdd7d02',
 	),
 );
-$md5_sum_softwareid = 'usermo';
-$md5_sum_versions['usermo'] = '1.1.0';
+$md5_sum_softwareid = 'phpkd_usermo';
+$md5_sum_versions['phpkd_usermo'] = '1.1.0';
 
 /*============================================================================*\
 || ########################################################################### ||
