@@ -30,7 +30,7 @@ require_once(DIR . '/includes/functions_usermo_log.php');
 // ############################# LOG ACTION ###############################
 if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['viewlog']))
 {
-	print_cp_no_permission();
+	print_stop_message('phpkd_usermo_no_access_to_logs');
 }
 
 log_admin_action();

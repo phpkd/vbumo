@@ -2059,6 +2059,7 @@ if (is_array($usermo_nav) AND !empty($usermo_nav))
 			<phrase name="phpkd_usermo_viewlog" date="1217934941" username="PHPKD" version="1.1.0"><![CDATA[Can View Log]]></phrase>
 		</phrasetype>
 		<phrasetype name="Error Messages" fieldname="error">
+			<phrase name="phpkd_usermo_no_access_to_logs" date="1215046714" username="PHPKD" version="1.1.0"><![CDATA[Sorry, you don't have permission to access the administrative controls on this page.<br /><br />If you need to access this page, ask your lead administrator to enable your permissions for this page using the "Usergroup Permissions" section of the control panel.]]></phrase>
 			<phrase name="phpkd_usermo_profilepicdisabled" date="1215046714" username="PHPKD" version="1.0.0"><![CDATA[The administrator has disabled the use of profile pictures.]]></phrase>
 			<phrase name="pruned_usermo_log_successfully" date="1217940093" username="PHPKD" version="1.1.0"><![CDATA[Pruned User Moderating Options Log Successfully]]></phrase>
 			<phrase name="phpkd_usermo_user_has_no_perms" date="1215103109" username="PHPKD" version="1.0.0"><![CDATA[It's not permitted for the user to edit {1}]]></phrase>
@@ -2098,9 +2099,9 @@ if (is_array($usermo_nav) AND !empty($usermo_nav))
 		<phrasetype name="Logging Tools" fieldname="logging">
 			<phrase name="are_you_sure_you_want_to_prune_x_log_entries_from_usermo_log" date="1217940024" username="PHPKD" version="1.1.0"><![CDATA[Are you sure you want to prune {1} log entries from the moderator log?]]></phrase>
 			<phrase name="prune_usermo_log" date="1217939971" username="PHPKD" version="1.1.0"><![CDATA[Prune User Moderating Options Log]]></phrase>
-			<phrase name="phpkd_usermo_editavatar" date="1217941677" username="PHPKD" version="1.1.0"><![CDATA[User's Avatar Edited.]]></phrase>
-			<phrase name="phpkd_usermo_editprofilepic" date="1217941693" username="PHPKD" version="1.1.0"><![CDATA[User's Profile Picture Edited.]]></phrase>
-			<phrase name="phpkd_usermo_editsignature" date="1217941706" username="PHPKD" version="1.1.0"><![CDATA[User's Signature Edited.]]></phrase>
+			<phrase name="usermo_editavatar" date="1217941677" username="PHPKD" version="1.1.0"><![CDATA[User's Avatar Edited.]]></phrase>
+			<phrase name="usermo_editprofilepic" date="1217941693" username="PHPKD" version="1.1.0"><![CDATA[User's Profile Picture Edited.]]></phrase>
+			<phrase name="usermo_editsignature" date="1217941706" username="PHPKD" version="1.1.0"><![CDATA[User's Signature Edited.]]></phrase>
 			<phrase name="phpkd_usermo_log" date="1217940205" username="PHPKD" version="1.1.0"><![CDATA[User Moderating Options Log]]></phrase>
 			<phrase name="phpkd_usermo_log_viewer" date="1217940151" username="PHPKD" version="1.1.0"><![CDATA[User Moderating Options Log Viewer]]></phrase>
 			<phrase name="phpkd_usermo_log_viewer_page_x_y_there_are_z_total_log_entries" date="1217939751" username="PHPKD" version="1.1.0"><![CDATA[USERMO Log Viewer (page {1}/{2}) | There are {3} total log entries.]]></phrase>
