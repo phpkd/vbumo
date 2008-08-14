@@ -15,7 +15,7 @@
 
 $md5_sums = array(
 	'/admincp' => array(
-		'usermolog.php' => 'c412687f0ef1eac4fbc1912e7c9f3ba1',
+		'usermolog.php' => 'ec0f11367aaf01d22f4b6c6af41c0a88',
 	),
 	'/includes' => array(
 		'functions_usermo_log.php' => '7af669eabf044a5eac3cc5b6dafd7d01',
