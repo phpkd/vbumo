@@ -8,12 +8,13 @@
 				<bitfield name="managesignature"      group="phpkd_usermo_options" phrase="phpkd_usermo_managesignature"      >2</bitfield>
 				<bitfield name="manageavatar"         group="phpkd_usermo_options" phrase="phpkd_usermo_manageavatar"         >4</bitfield>
 				<bitfield name="manageprofilepicture" group="phpkd_usermo_options" phrase="phpkd_usermo_manageprofilepicture" >8</bitfield>
-				<bitfield name="logactions"           group="phpkd_usermo_options" phrase="phpkd_usermo_logactions"           >16</bitfield>
-				<bitfield name="viewlog"              group="phpkd_usermo_options" phrase="phpkd_usermo_viewlog"              >32</bitfield>
-				<bitfield name="prunelog"             group="phpkd_usermo_options" phrase="phpkd_usermo_prunelog"             >64</bitfield>
+				<bitfield name="managealbum"          group="phpkd_usermo_options" phrase="phpkd_usermo_managealbum"          >16</bitfield>
+				<bitfield name="logactions"           group="phpkd_usermo_options" phrase="phpkd_usermo_logactions"           >32</bitfield>
+				<bitfield name="viewlog"              group="phpkd_usermo_options" phrase="phpkd_usermo_viewlog"              >64</bitfield>
+				<bitfield name="prunelog"             group="phpkd_usermo_options" phrase="phpkd_usermo_prunelog"             >128</bitfield>
 			</group>
 		</group>
 	</bitfielddefs>
 </bitfields>
 
-<!-- Version: 1.1.0 | Revision: $Revision$ | Released: $Date$ -->
+<!-- Version: 1.1.1 | Revision: $Revision$ | Released: $Date$ -->

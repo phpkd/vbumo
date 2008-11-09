@@ -1,15 +1,16 @@
 <?php
 /*============================================================================*\
 || ########################################################################### ||
-|| # Product Name: User Moderating Options                    Version: 1.1.0 # ||
-|| # License Type: Custom Paid License                      $Revision$ # ||
+|| # Product Name: User Moderating Options                    Version: 1.2.0 # ||
+|| # License Number: Custom License                         $Revision$ # ||
 || # ----------------------------------------------------------------------- # ||
 || #                                                                         # ||
-|| #         Copyright ©2005-2008 PHP KingDom. All Rights Reserved.          # ||
-|| #   This product may not be redistributed in whole or significant part.   # ||
+|| #         Copyright ©2005-2008 PHP KingDom. Some Rights Reserved.         # ||
+|| #   This product may be redistributed in whole or significant part under  # ||
+|| #      "Creative Commons - Attribution-Noncommercial-Share Alike 3.0"     # ||
 || #                                                                         # ||
-|| # ----------- 'User Moderating Options' IS NOT FREE SOFTWARE ------------ # ||
-|| #  http://www.phpkd.org | http://www.phpkd.org/info/license/custompaid    # ||
+|| # ------------- 'User Moderating Options' IS FREE SOFTWARE -------------- # ||
+|| #        http://www.phpkd.net | http://go.phpkd.net/license/custom/       # ||
 || ########################################################################### ||
 \*============================================================================*/
 
@@ -26,6 +27,7 @@ function fetch_usermologtypes($logtype)
 		'usermo_editavatar'     => 1,
 		'usermo_editprofilepic' => 2,
 		'usermo_editsignature'  => 3,
+		'usermo_editalbumpic'   => 4,
 	);
 
 	($hook = vBulletinHook::fetch_hook('fetch_usermologtypes')) ? eval($hook) : false;
@@ -46,6 +48,7 @@ function fetch_usermologactions($logaction)
 		1	=>	'usermo_editavatar',
 		2	=>	'usermo_editprofilepic',
 		3	=>	'usermo_editsignature',
+		4	=>	'usermo_editalbumpic',
 	);
 
 	($hook = vBulletinHook::fetch_hook('fetch_usermologactions')) ? eval($hook) : false;
@@ -107,7 +110,7 @@ function log_usermo_action($loginfo, $logtype, $action = '')
 
 /*============================================================================*\
 || ########################################################################### ||
-|| # Version: 1.1.0
+|| # Version: 1.2.0
 || # $Revision$
 || # Released: $Date$
 || ########################################################################### ||

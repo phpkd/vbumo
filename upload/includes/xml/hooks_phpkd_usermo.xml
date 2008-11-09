@@ -3,6 +3,7 @@
 <hooks>
 
 	<hooktype type="profile">
+		<hook>profile_usermo_start</hook>
 		<hook>profile_usermo_editavatar_start</hook>
 		<hook>profile_usermo_editavatar_bit</hook>
 		<hook>profile_usermo_updateavatar_start</hook>
@@ -15,6 +16,7 @@
 		<hook>profile_usermo_updatesigpic_start</hook>
 		<hook>profile_usermo_updatesigpic_complete</hook>
 		<hook>profile_usermo_editsignature_start</hook>
+		<hook>profile_usermo_complete</hook>
 	</hooktype>
 
 	<hooktype type="general">
@@ -31,4 +33,4 @@
 
 </hooks>
 
-<!-- Version: 1.1.0 | Revision: $Revision$ | Released: $Date$ -->
+<!-- Version: 1.2.0 | Revision: $Revision$ | Released: $Date$ -->

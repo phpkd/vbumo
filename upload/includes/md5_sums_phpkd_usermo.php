@@ -1,15 +1,16 @@
 <?php
 /*============================================================================*\
 || ########################################################################### ||
-|| # Product Name: User Moderating Options                    Version: 1.1.0 # ||
-|| # License Type: Custom Paid License                      $Revision$ # ||
+|| # Product Name: User Moderating Options                    Version: 1.2.0 # ||
+|| # License Number: Custom License                         $Revision$ # ||
 || # ----------------------------------------------------------------------- # ||
 || #                                                                         # ||
-|| #         Copyright ©2005-2008 PHP KingDom. All Rights Reserved.          # ||
-|| #   This product may not be redistributed in whole or significant part.   # ||
+|| #         Copyright ©2005-2008 PHP KingDom. Some Rights Reserved.         # ||
+|| #   This product may be redistributed in whole or significant part under  # ||
+|| #      "Creative Commons - Attribution-Noncommercial-Share Alike 3.0"     # ||
 || #                                                                         # ||
-|| # ----------- 'User Moderating Options' IS NOT FREE SOFTWARE ------------ # ||
-|| #  http://www.phpkd.org | http://www.phpkd.org/info/license/custompaid    # ||
+|| # ------------- 'User Moderating Options' IS FREE SOFTWARE -------------- # ||
+|| #        http://www.phpkd.net | http://go.phpkd.net/license/custom/       # ||
 || ########################################################################### ||
 \*============================================================================*/
 
@@ -31,7 +32,7 @@ $md5_sum_versions['phpkd_usermo'] = '1.1.0';
 
 /*============================================================================*\
 || ########################################################################### ||
-|| # Version: 1.1.0
+|| # Version: 1.2.0
 || # $Revision$
 || # Released: $Date$
 || ########################################################################### ||

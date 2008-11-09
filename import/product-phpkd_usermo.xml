@@ -3,7 +3,7 @@
 <product productid="phpkd_usermo" active="1">
 	<title><![CDATA[User Moderating Options]]></title>
 	<description><![CDATA[This product allows staff to edit user's avatar, profile picture & signature inside forums without logging AdminCP/ModCP, Administrators also has the ability to control which user groups allowed to edit others avatar, profile picture and signature.]]></description>
-	<version><![CDATA[1.1.0]]></version>
+	<version><![CDATA[1.2.0]]></version>
 	<revision><![CDATA[$Revision$]]></revision>
 	<released><![CDATA[$Date$]]></released>
 	<url><![CDATA[http://www.phpkd.org/forum/misc.php?do=mods&action=producthelp&pid=phpkd_usermo]]></url>
@@ -12,6 +12,48 @@
 		<dependency dependencytype="vbulletin" minversion="3.7.0" maxversion="3.7.99" />
 	</dependencies>
 	<codes>
+		<code version="*">
+			<installcode><![CDATA[$phpkd_usermo_files = array(
+	DIR . '/usermo.php',
+	DIR . '/includes/phpkd/phpkd_usermo_plugins.php',
+	DIR . '/includes/phpkd/phpkd_usermo_functions.php',
+	DIR . '/includes/xml/cpnav_phpkd_usermo.xml',
+	DIR . '/includes/xml/bitfield_phpkd_usermo.xml',
+	DIR . '/includes/xml/hooks_phpkd_usermo.xml',
+	DIR . '/includes/functions_usermo_log.php',
+	DIR . '/includes/md5_sums_phpkd_usermo.php',
+	DIR . '/' . $vbulletin->config['Misc']['admincpdir'] . '/usermolog.php'
+);
+
+function phpkd_usermo_files($files)
+{
+	foreach ($files AS $fileid => $file)
+	{
+		if (file_exists($file))
+		{
+			unset($files[$fileid]);
+		}
+	}
+
+	return $files;
+}
+
+
+$phpkd_usermo_files_not_exists = phpkd_usermo_files($phpkd_usermo_files);
+
+if (is_array($phpkd_usermo_files_not_exists) AND !empty($phpkd_usermo_files_not_exists))
+{
+	$phpkd_usermo_absent_files .= "<ol>\n";
+	foreach ($phpkd_usermo_files_not_exists AS $phpkd_usermo_absent_file)
+	{
+		$phpkd_usermo_absent_files .= "\t<li>" . $phpkd_usermo_absent_file . "</li>\n";
+	}
+	$phpkd_usermo_absent_files .= "</ol>\n";
+	print_dots_stop();
+	print_cp_message('Please make sure that you have uploaded the following files that came with the product "Username Change Manager" before installing or upgrading!' . $phpkd_usermo_absent_files);
+}]]></installcode>
+			<uninstallcode />
+		</code>
 		<code version="*">
 			<installcode><![CDATA[$db->hide_errors();
 // look to see if we already have old versions of this product installed
@@ -40,6 +82,9 @@ if ($vbulletin->options['phpkd_custompaid37_data'])
 		SET value = '$data'
 		WHERE varname = 'phpkd_custompaid37_data'
 	");
+
+	print_dots_start("Upgrading: " . $info['title'] . "<br />Version: " . $info['version'] . ", Revision: " . $info['revision'] . ", Released: " . $info['released'] . ".<br />" . $vbphrase['please_wait'], ':', 'phpkd_usermo_install_info');
+	print_dots_stop();
 }
 else
 {
@@ -59,11 +104,12 @@ else
 		VALUES
 			('-1', 'vbsettings', 'setting_phpkd_custompaid37_data_title', 'PHPKD Custom Paid Products\' Data (3.7.x) [Sensitive]', 'phpkd_frame_work', 'PHPKD', '" . TIMENOW . "', '1.0.0'),
 			('-1', 'vbsettings', 'setting_phpkd_custompaid37_data_desc', 'PHPKD Custom Paid Products\' Data used for debugging issues. <strong>[Sensitive Data, DON\'T ALTER]</strong>.', 'phpkd_frame_work', 'PHPKD', '" . TIMENOW . "', '1.0.0')
-		");
+	");
+
+	print_dots_start("Installing: " . $info['title'] . "<br />Version: " . $info['version'] . ", Revision: " . $info['revision'] . ", Released: " . $info['released'] . ".<br />" . $vbphrase['please_wait'], ':', 'phpkd_usermo_install_info');
+	print_dots_stop();
 }
 
-print_dots_start("Installing: " . $info['title'] . "<br />Version: " . $info['version'] . ", Revision: " . $info['revision'] . ", Released: " . $info['released'] . ".<br />" . $vbphrase['please_wait'], ':', 'phpkd_usermo_install_info');
-print_dots_stop();
 $db->show_errors();]]></installcode>
 			<uninstallcode><![CDATA[$db->hide_errors();
 if ($vbulletin->options['phpkd_custompaid37_data'])
@@ -146,6 +192,7 @@ $db->show_errors();]]></uninstallcode>
 		</code>
 	</codes>
 	<templates>
+		<template name="phpkd_usermo_album_picturebit" templatetype="template" date="1225969007" username="PHPKD" version="1.1.1"><![CDATA[<if condition="$show['moderation']"><a href="album.php?$session[sessionurl]do=approvepic&amp;albumid=$albuminfo[albumid]&amp;pictureid=$picture[pictureid]">$vbphrase[phpkd_usermo_approve_this_picture]</a></td><else /><a href="album.php?$session[sessionurl]do=moderatepic&amp;albumid=$albuminfo[albumid]&amp;pictureid=$picture[pictureid]">$vbphrase[phpkd_usermo_moderate_this_picture]</a></td></if>]]></template>
 		<template name="phpkd_usermo_help_avatars_row" templatetype="template" date="1214864977" username="PHPKD" version="1.0.0"><![CDATA[<tr align="center" valign="bottom">
 $avatarcells
 <if condition="$remainingcolumns > 0">
@@ -176,16 +223,16 @@ function check_yes(objid)
 function switch_avatar_category()
 {
 	selobj = fetch_object("avatar_category_select");
-	window.location = "profile.php?$session[sessionurl_js]do=usermo_editavatar&u=$userinfo[userid]&categoryid=" + selobj.options[selobj.selectedIndex].value;
+	window.location = "usermo.php?$session[sessionurl_js]do=editavatar&u=$userinfo[userid]&categoryid=" + selobj.options[selobj.selectedIndex].value;
 }
 </if>
 //-->
 </script>
 
-<form enctype="multipart/form-data" action="profile.php?do=usermo_updateavatar" method="post" name="vbform">
+<form enctype="multipart/form-data" action="usermo.php?do=updateavatar" method="post" name="vbform">
 <input type="hidden" name="s" value="$session[sessionhash]" />
 <input type="hidden" name="securitytoken" value="$bbuserinfo[securitytoken]" />
-<input type="hidden" name="do" value="usermo_updateavatar" />
+<input type="hidden" name="do" value="updateavatar" />
 <input type="hidden" name="userid" value="$userid" />
 
 <table class="tborder" cellpadding="$stylevar[cellpadding]" cellspacing="$stylevar[cellspacing]" border="0" width="100%" align="center">
@@ -327,10 +374,10 @@ $usermo_results
 </if>
 
 <if condition="!$show['usermo_results'] AND !$show['usermo_search']">
-<form enctype="multipart/form-data" action="profile.php?do=usermo_updateprofilepic" method="post" name="vbform">
+<form enctype="multipart/form-data" action="usermo.php?do=updateprofilepic" method="post" name="vbform">
 <input type="hidden" name="s" value="$session[sessionhash]" />
 <input type="hidden" name="securitytoken" value="$bbuserinfo[securitytoken]" />
-<input type="hidden" name="do" value="usermo_updateprofilepic" />
+<input type="hidden" name="do" value="updateprofilepic" />
 <input type="hidden" name="userid" value="$userid" />
 
 <table class="tborder" cellpadding="$stylevar[cellpadding]" cellspacing="$stylevar[cellspacing]" border="0" width="100%" align="center">
@@ -433,7 +480,7 @@ $usermo_results
 <if condition="!$show['usermo_results'] AND !$show['usermo_search']">
 $preview
 
-<form action="profile.php?do=usermo_updatesignature" enctype="multipart/form-data" method="post" name="vbform"<if condition="!is_browser('webtv')"> onsubmit="return vB_Editor['$editorid'].prepare_submit(0, 0)"</if>>
+<form action="usermo.php?do=updatesignature" enctype="multipart/form-data" method="post" name="vbform"<if condition="!is_browser('webtv')"> onsubmit="return vB_Editor['$editorid'].prepare_submit(0, 0)"</if>>
 <table class="tborder" cellpadding="$stylevar[cellpadding]" cellspacing="$stylevar[cellspacing]" border="0" width="100%" align="center">
 <tr>
 	<td class="tcat"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_edit_signature]</phrase></td>
@@ -469,7 +516,7 @@ $preview
 			<input type="hidden" name="url" value="$url" />
 			<input type="hidden" name="s" value="$session[sessionhash]" />
 			<input type="hidden" name="securitytoken" value="$bbuserinfo[securitytoken]" />
-			<input type="hidden" name="do" value="usermo_updatesignature" />
+			<input type="hidden" name="do" value="updatesignature" />
 			<input type="hidden" name="userid" value="$userid" />
 			<input type="hidden" name="MAX_FILE_SIZE" value="$inimaxattach" />
 			<input type="submit" class="button" value="$vbphrase[save_signature]" accesskey="s" tabindex="1" />
@@ -546,7 +593,7 @@ $preview
 	<div style="margin-top:$stylevar[cellpadding]px">
 		<input type="hidden" name="s" value="$session[sessionhash]" />
 		<input type="hidden" name="securitytoken" value="$bbuserinfo[securitytoken]" />
-		<input type="hidden" name="do" value="usermo_updatesignature" />
+		<input type="hidden" name="do" value="updatesignature" />
 		<input type="hidden" name="userid" value="$userid" />
 		<input type="hidden" name="url" value="$url" />
 		<input type="hidden" name="MAX_FILE_SIZE" value="$inimaxattach" />
@@ -643,9 +690,9 @@ var preview_focus = true;
 <br />]]></template>
 		<template name="phpkd_usermo_postbit" templatetype="template" date="1215184791" username="PHPKD" version="1.0.0"><![CDATA[<!-- $usermo[title] -->
 <if condition="$show['usermo_editavatar'] OR $show['usermo_editprofilepic'] OR $show['usermo_editsignature']"><tr><td class="thead">$vbphrase[phpkd_usermo_nav]</td></tr></if>
-<if condition="$show['usermo_editavatar']"><tr><td class="vbmenu_option"><a href="profile.php?$session[sessionurl]do=usermo_editavatar&amp;u=$post[userid]"><phrase 1="$post[username]">$vbphrase[phpkd_usermo_edit_avatar]</phrase></a></td></tr></if>
-<if condition="$show['usermo_editprofilepic']"><tr><td class="vbmenu_option"><a href="profile.php?$session[sessionurl]do=usermo_editprofilepic&amp;u=$post[userid]"><phrase 1="$post[username]">$vbphrase[phpkd_usermo_edit_profile_picture]</phrase></a></td></tr></if>
-<if condition="$show['usermo_editsignature']"><tr><td class="vbmenu_option"><a href="profile.php?$session[sessionurl]do=usermo_editsignature&amp;u=$post[userid]"><phrase 1="$post[username]">$vbphrase[phpkd_usermo_edit_signature]</phrase></a></td></tr></if>
+<if condition="$show['usermo_editavatar']"><tr><td class="vbmenu_option"><a href="usermo.php?$session[sessionurl]do=editavatar&amp;u=$post[userid]"><phrase 1="$post[username]">$vbphrase[phpkd_usermo_edit_avatar]</phrase></a></td></tr></if>
+<if condition="$show['usermo_editprofilepic']"><tr><td class="vbmenu_option"><a href="usermo.php?$session[sessionurl]do=editprofilepic&amp;u=$post[userid]"><phrase 1="$post[username]">$vbphrase[phpkd_usermo_edit_profile_picture]</phrase></a></td></tr></if>
+<if condition="$show['usermo_editsignature']"><tr><td class="vbmenu_option"><a href="usermo.php?$session[sessionurl]do=editsignature&amp;u=$post[userid]"><phrase 1="$post[username]">$vbphrase[phpkd_usermo_edit_signature]</phrase></a></td></tr></if>
 <!-- Product's Debug Info: Name: $usermo[title], Version: $usermo[version], Revision: $usermo[revision], Released: $usermo[released]. -->]]></template>
 		<template name="phpkd_usermo_profile" templatetype="template" date="1217239715" username="PHPKD" version="1.0.1"><![CDATA[<!-- $usermo[title] -->
 			<!-- usermo popup menu -->
@@ -653,9 +700,9 @@ var preview_focus = true;
 				<if condition="$show['usermo_editavatar'] OR $show['usermo_editprofilepic'] OR $show['usermo_editsignature']">
 					<li class="thead first"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_nav_x]</phrase></li>
 				</if>
-				<if condition="$show['usermo_editavatar']"><li class="vbmenu_option"><a href="profile.php?$session[sessionurl]do=usermo_editavatar&amp;u=$userinfo[userid]"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_edit_avatar]</phrase></a></li></if>
-				<if condition="$show['usermo_editprofilepic']"><li class="vbmenu_option"><a href="profile.php?$session[sessionurl]do=usermo_editprofilepic&amp;u=$userinfo[userid]"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_edit_profile_picture]</phrase></a></li></if>
-				<if condition="$show['usermo_editsignature']"><li class="vbmenu_option"><a href="profile.php?$session[sessionurl]do=usermo_editsignature&amp;u=$userinfo[userid]"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_edit_signature]</phrase></a></li></if>
+				<if condition="$show['usermo_editavatar']"><li class="vbmenu_option"><a href="usermo.php?$session[sessionurl]do=editavatar&amp;u=$userinfo[userid]"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_edit_avatar]</phrase></a></li></if>
+				<if condition="$show['usermo_editprofilepic']"><li class="vbmenu_option"><a href="usermo.php?$session[sessionurl]do=editprofilepic&amp;u=$userinfo[userid]"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_edit_profile_picture]</phrase></a></li></if>
+				<if condition="$show['usermo_editsignature']"><li class="vbmenu_option"><a href="usermo.php?$session[sessionurl]do=editsignature&amp;u=$userinfo[userid]"><phrase 1="$userinfo[username]">$vbphrase[phpkd_usermo_edit_signature]</phrase></a></li></if>
 			</ul>
 			<!-- / usermo popup menu -->
 			<!-- Product's Debug Info: Name: $usermo[title], Version: $usermo[version], Revision: $usermo[revision], Released: $usermo[released]. -->]]></template>
@@ -674,7 +721,7 @@ var preview_focus = true;
 $usermo_results_bits
 </table>
 ]]></template>
-		<template name="phpkd_usermo_search" templatetype="template" date="1215104332" username="PHPKD" version="1.0.0"><![CDATA[<form action="profile.php?do=$request" method="post">
+		<template name="phpkd_usermo_search" templatetype="template" date="1215104332" username="PHPKD" version="1.0.0"><![CDATA[<form action="usermo.php?do=$request" method="post">
 
 <table class="tborder" cellpadding="$stylevar[cellpadding]" cellspacing="$stylevar[cellspacing]" border="0" width="100%" align="center">
 <tr>
@@ -721,1324 +768,71 @@ $usermo_results_bits
 </form>]]></template>
 		<template name="phpkd_usermo_usercp" templatetype="template" date="1215184718" username="PHPKD" version="1.0.0"><![CDATA[<!-- $usermo[title] -->
 <if condition="$show['usermo_editavatar'] OR $show['usermo_editprofilepic'] OR $show['usermo_editsignature']"><tr><td class="thead">$vbphrase[phpkd_usermo_nav]</td></tr></if>
-<if condition="$show['usermo_editavatar']"><tr><td class="$navclass[usermo_editavatar]" nowrap="nowrap"><a class="smallfont" href="profile.php?$session[sessionurl]do=usermo_editavatar"><phrase 1="$vbphrase[user]">$vbphrase[phpkd_usermo_edit_avatar]</phrase></a></td></tr></if>
-<if condition="$show['usermo_editprofilepic']"><tr><td class="$navclass[usermo_editprofilepic]" nowrap="nowrap"><a class="smallfont" href="profile.php?$session[sessionurl]do=usermo_editprofilepic"><phrase 1="$vbphrase[user]">$vbphrase[phpkd_usermo_edit_profile_picture]</phrase></a></td></tr></if>
-<if condition="$show['usermo_editsignature']"><tr><td class="$navclass[usermo_editsignature]" nowrap="nowrap"><a class="smallfont" href="profile.php?$session[sessionurl]do=usermo_editsignature"><phrase 1="$vbphrase[user]">$vbphrase[phpkd_usermo_edit_signature]</phrase></a></td></tr></if>
+<if condition="$show['usermo_editavatar']"><tr><td class="$navclass[usermo_editavatar]" nowrap="nowrap"><a class="smallfont" href="usermo.php?$session[sessionurl]do=editavatar"><phrase 1="$vbphrase[user]">$vbphrase[phpkd_usermo_edit_avatar]</phrase></a></td></tr></if>
+<if condition="$show['usermo_editprofilepic']"><tr><td class="$navclass[usermo_editprofilepic]" nowrap="nowrap"><a class="smallfont" href="usermo.php?$session[sessionurl]do=editprofilepic"><phrase 1="$vbphrase[user]">$vbphrase[phpkd_usermo_edit_profile_picture]</phrase></a></td></tr></if>
+<if condition="$show['usermo_editsignature']"><tr><td class="$navclass[usermo_editsignature]" nowrap="nowrap"><a class="smallfont" href="usermo.php?$session[sessionurl]do=editsignature"><phrase 1="$vbphrase[user]">$vbphrase[phpkd_usermo_edit_signature]</phrase></a></td></tr></if>
 <!-- Product's Debug Info: Name: $usermo[title], Version: $usermo[version], Revision: $usermo[revision], Released: $usermo[released]. -->]]></template>
 	</templates>
 	<plugins>
 		<plugin active="1" executionorder="5">
+			<title><![CDATA[User Moderating Options - [ Picture Preview Mandatory Replacements ]]]></title>
+			<hookname>album_picture_complete</hookname>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[User Moderating Options - [ Picture Bits Mandatory Replacements (Initiation) ]]]></title>
+			<hookname>album_album_query</hookname>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[User Moderating Options - [ Picture Bits Mandatory Replacements ]]]></title>
+			<hookname>album_album_picturebit</hookname>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[User Moderating Options - [ Albums Main Processes ]]]></title>
+			<hookname>album_start_postcheck</hookname>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Cache Templates ]]]></title>
 			<hookname>cache_templates</hookname>
-			<phpcode><![CDATA[if ($vbulletin->options['avatarenabled'] AND (($vbulletin->userinfo['permissions']['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageavatar']) OR can_moderate(0, 'caneditavatar')))
-{
-	$show['usermo_editavatar'] = true;
-}
-else
-{
-	$show['usermo_editavatar'] = false;
-}
-
-if ($vbulletin->options['profilepicenabled'] AND (($vbulletin->userinfo['permissions']['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageprofilepicture']) OR can_moderate(0, 'caneditprofilepic')))
-{
-	$show['usermo_editprofilepic'] = true;
-}
-else
-{
-	$show['usermo_editprofilepic'] = false;
-}
-
-if ((($vbulletin->userinfo['permissions']['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managesignature']) OR can_moderate(0, 'caneditsigs')))
-{
-	$show['usermo_editsignature'] = true;
-}
-else
-{
-	$show['usermo_editsignature'] = false;
-}
-
-
-if ($show['usermo_editavatar'] OR $show['usermo_editprofilepic'] OR $show['usermo_editsignature'])
-{
-	$globaltemplates[] = "phpkd_usermo_usercp";
-	$globaltemplates[] = "phpkd_usermo_postbit";
-	$globaltemplates[] = "phpkd_usermo_profile";
-	if (!$vbulletin->GPC['userid'])
-	{
-		$globaltemplates[] = "phpkd_usermo_search";
-		$globaltemplates[] = "phpkd_usermo_results";
-		$globaltemplates[] = "phpkd_usermo_results_bits";
-	}
-
-	if ($show['usermo_editavatar'])
-	{
-		$globaltemplates[] = "phpkd_usermo_modifyavatar";
-		$globaltemplates[] = "phpkd_usermo_modifyavatarbit";
-		$globaltemplates[] = "phpkd_usermo_modifyavatarbit_custom";
-		$globaltemplates[] = "phpkd_usermo_modifyavatarbit_noavatar";
-		$globaltemplates[] = "phpkd_usermo_modifyavatar_category";
-		$globaltemplates[] = "phpkd_usermo_help_avatars_row";
-		
-	}
-
-	if ($show['usermo_editprofilepic'])
-	{
-		$globaltemplates[] = "phpkd_usermo_modifyprofilepic";
-	}
-
-	if ($show['usermo_editsignature'])
-	{
-		$globaltemplates[] = "phpkd_usermo_newpost_errormessage";
-		$globaltemplates[] = "phpkd_usermo_newpost_preview";
-		$globaltemplates[] = "phpkd_usermo_modifysignature";
-	}
-
-	// Prepare Debiugging Data!
-	if (!$usermo AND $usermo_data = unserialize($vbulletin->options['phpkd_custompaid37_data']))
-	{
-		$usermo =& $usermo_data['phpkd_usermo'];
-	}
-}]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Member Profile's Options ]]]></title>
 			<hookname>member_execute_start</hookname>
-			<phpcode><![CDATA[if ($vbulletin->userinfo['userid'] != $vbulletin->GPC['userid'])
-{
-	require_once(DIR . '/includes/adminfunctions.php');
-	if ($vbulletin->options['avatarenabled'] AND (($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageavatar']) OR can_moderate(0, 'caneditavatar')) AND ($vbulletin->GPC['userid'] != 0 AND !is_unalterable_user($vbulletin->GPC['userid'])) AND ($userperms['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managed']))
-	{
-		$show['usermo_editavatar'] = true;
-	}
-	else
-	{
-		$show['usermo_editavatar'] = false;
-	}
-
-	if ($vbulletin->options['profilepicenabled'] AND (($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageprofilepicture']) OR can_moderate(0, 'caneditprofilepic')) AND ($vbulletin->GPC['userid'] != 0 AND !is_unalterable_user($vbulletin->GPC['userid'])) AND ($userperms['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managed']) AND ($userperms['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canprofilepic']))
-	{
-		$show['usermo_editprofilepic'] = true;
-	}
-	else
-	{
-		$show['usermo_editprofilepic'] = false;
-	}
-
-	if ((($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managesignature']) OR can_moderate(0, 'caneditsigs')) AND ($vbulletin->GPC['userid'] != 0 AND !is_unalterable_user($vbulletin->GPC['userid'])) AND ($userperms['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managed']) AND ($userperms['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canusesignature']))
-	{
-		$show['usermo_editsignature'] = true;
-	}
-	else
-	{
-		$show['usermo_editsignature'] = false;
-	}
-
-
-	if ($show['usermo_editavatar'] OR $show['usermo_editprofilepic'] OR $show['usermo_editsignature'])
-	{
-		eval('$usermo_options .= " ' . fetch_template('phpkd_usermo_profile') . '";');
-		$vbulletin->templatecache['MEMBERINFO'] = str_replace(array('<ul class=\"thead block_row block_title list_no_decoration floatcontainer\">', '<!-- / link bar -->'), array('<ul class=\"thead block_row block_title list_no_decoration floatcontainer\"><li class=\"thead\" id=\"usermo\"><a href=\"#usermo\">$vbphrase[phpkd_usermo_nav]</a> <script type=\"text/javascript\">vBmenu.register(\"usermo\");</script></li>', '<!-- / link bar -->$usermo_options'), $vbulletin->templatecache['MEMBERINFO']);
-	}
-}]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[User Moderating Options - [ Postbit Display Complete ]]]></title>
+			<hookname>showthread_postbit_create</hookname>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Postbit Display Complete ]]]></title>
 			<hookname>postbit_display_complete</hookname>
-			<phpcode><![CDATA[if ($this->registry->userinfo['userid'] != $this->post['userid'])
-{
-	require_once(DIR . '/includes/adminfunctions.php');
-	if ($this->registry->options['avatarenabled'] AND (($this->registry->userinfo['permissions']['phpkdusermo'] & $this->registry->bf_ugp_phpkdusermo['manageavatar']) OR can_moderate(0, 'caneditavatar')) AND ($this->post['userid'] != 0 AND !is_unalterable_user($this->post['userid'])) AND ($this->cache['perms'][$this->post['userid']]['phpkdusermo'] & $this->registry->bf_ugp_phpkdusermo['managed']))
-	{
-		$show['usermo_editavatar'] = true;
-	}
-	else
-	{
-		$show['usermo_editavatar'] = false;
-	}
-
-	if ($this->registry->options['profilepicenabled'] AND (($this->registry->userinfo['permissions']['phpkdusermo'] & $this->registry->bf_ugp_phpkdusermo['manageprofilepicture']) OR can_moderate(0, 'caneditprofilepic')) AND ($this->post['userid'] != 0 AND !is_unalterable_user($this->post['userid'])) AND ($this->cache['perms'][$this->post['userid']]['phpkdusermo'] & $this->registry->bf_ugp_phpkdusermo['managed']) AND ($this->cache['perms'][$this->post['userid']]['genericpermissions'] & $this->registry->bf_ugp_genericpermissions['canprofilepic']))
-	{
-		$show['usermo_editprofilepic'] = true;
-	}
-	else
-	{
-		$show['usermo_editprofilepic'] = false;
-	}
-
-	if ((($this->registry->userinfo['permissions']['phpkdusermo'] & $this->registry->bf_ugp_phpkdusermo['managesignature']) OR can_moderate(0, 'caneditsigs')) AND ($this->post['userid'] != 0 AND !is_unalterable_user($this->post['userid'])) AND ($this->cache['perms'][$this->post['userid']]['phpkdusermo'] & $this->registry->bf_ugp_phpkdusermo['managed']) AND ($this->cache['perms'][$this->post['userid']]['genericpermissions'] & $this->registry->bf_ugp_genericpermissions['canusesignature']))
-	{
-		$show['usermo_editsignature'] = true;
-	}
-	else
-	{
-		$show['usermo_editsignature'] = false;
-	}
-
-
-	if ($show['usermo_editavatar'] OR $show['usermo_editprofilepic'] OR $show['usermo_editsignature'])
-	{
-		eval('$template_hook[postbit_user_popup] .= " ' . fetch_template('phpkd_usermo_postbit') . '";');
-	}
-}]]></phpcode>
-		</plugin>
-		<plugin active="1" executionorder="5">
-			<title><![CDATA[User Moderating Options - [ Profile Start ]]]></title>
-			<hookname>profile_start</hookname>
-			<phpcode><![CDATA[$usermo_requests = array('usermo_editavatar', 'usermo_editprofilepic', 'usermo_editsignature');
-$usermo_posts = array('usermo_updateavatar', 'usermo_updateprofilepic', 'usermo_updatesignature', 'usermo_updatesigpic');
-
-if (in_array($_REQUEST['do'], $usermo_requests) OR in_array($_POST['do'], $usermo_posts))
-{
-	if ($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['logactions'])
-	{
-		require_once(DIR . '/includes/functions_usermo_log.php');
-		$show['logactions'] = true;
-	}
-
-	$show['usermo_search'] = false;
-	$show['usermo_results'] = false;
-
-	$request = $_REQUEST['do'];
-	switch ($request)
-	{
-		case 'usermo_editavatar':
-			$title = $vbphrase['avatar'];
-			break;
-		case 'usermo_editprofilepic':
-			$title = $vbphrase['profile_picture'];
-			break;
-		case 'usermo_editsignature':
-			$title = $vbphrase['signature'];
-			break;
-	}
-
-	$vbulletin->input->clean_array_gpc('r', array('userid' => TYPE_INT));
-	$vbulletin->input->clean_array_gpc('p', array('username' => TYPE_STR, 'exact' => TYPE_BOOL));
-
-	$userid = $vbulletin->GPC['userid'];
-	$username = $vbulletin->GPC['username'];
-	$exactchecked["{$vbulletin->GPC['exact']}"] = 'checked="checked"';
-
-	if (empty($vbulletin->GPC['userid']))
-	{
-		$show['usermo_search'] = true;
-		eval('$usermo_search .= "' . fetch_template('phpkd_usermo_search') . '";');
-	}
-	else if ($vbulletin->userinfo['userid'] == $vbulletin->GPC['userid'])
-	{
-		$request = substr($request, 7);
-		exec_header_redirect('profile.php?' . $vbulletin->session->vars['sessionurl_js'] . 'do=' . $request);
-	}
-	else
-	{
-		$userinfo = fetch_userinfo($vbulletin->GPC['userid'], FETCH_USERINFO_SIGPIC);
-		if (!$userinfo)
-		{
-			eval(standard_error(fetch_error('invalid_user_specified')));
-		}
-
-		cache_permissions($userinfo);
-		require_once(DIR . '/includes/adminfunctions.php');
-
-		if (is_unalterable_user($userinfo['userid']))
-		{
-			eval(standard_error(fetch_error('user_is_protected_from_alteration_by_undeletableusers_var')));
-		}
-
-		if (!($userinfo['permissions']['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managed']))
-		{
-			eval(standard_error(fetch_error('phpkd_usermo_usergroup_is_protected_from_alteration')));
-		}
-	}
-
-	if ($vbulletin->GPC['username'])
-	{
-		if ($vbulletin->GPC['exact'])
-		{
-			$condition = "username = '" . $db->escape_string($vbulletin->GPC['username']) . "'";
-		}
-		else
-		{
-			$condition = "username LIKE '%" . $db->escape_string_like($vbulletin->GPC['username']) . "%'";
-		}
-
-		$users = $db->query_read("
-			SELECT userid, username
-			FROM " . TABLE_PREFIX . "user
-			WHERE $condition
-			ORDER BY username
-		");
-
-		if ($db->num_rows($users) == 1)
-		{
-			$user = $db->fetch_array($users);
-			exec_header_redirect('profile.php?' . $vbulletin->session->vars['sessionurl_js'] . 'do=' . $request . '&amp;u=' . $user['userid']);
-		}
-		else if ($db->num_rows($users) > 1)
-		{
-			$show['usermo_results'] = true;
-
-			while ($user = $db->fetch_array($users))
-			{
-				$user['musername'] = fetch_musername($user);
-				eval('$usermo_results_bits .= "' . fetch_template('phpkd_usermo_results_bits') . '";');
-			}
-
-			eval('$usermo_results = "' . fetch_template('phpkd_usermo_results') . '";');
-		}
-		else
-		{
-			eval(standard_error(fetch_error('no_matches_found')));
-		}
-	}
-}
-
-
-
-// ############################################################################
-// ############################### EDIT AVATAR ################################
-// ############################################################################
-if ($_REQUEST['do'] == 'usermo_editavatar')
-{
-	$vbulletin->input->clean_array_gpc('r', array(
-		'pagenumber' => TYPE_UINT,
-		'categoryid' => TYPE_UINT
-	));
-
-	if (!$vbulletin->options['avatarenabled'])
-	{
-		eval(standard_error(fetch_error('avatardisabled')));
-	}
-
-	if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageavatar']) AND !can_moderate(0, 'caneditavatar'))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_no_permission_avatars')));
-	}
-
-	if ($vbulletin->options['phpkd_usermo_violated_avatar'])
-	{
-		require_once(DIR . '/includes/class_vurl.php');
-		$vurl = new vB_vURL($vbulletin);
-		$vurl->set_option(VURL_URL, $vbulletin->options['phpkd_usermo_violated_avatar']);
-		$vurl->set_option(VURL_HEADER, true);
-		$vurl->set_option(VURL_RETURNTRANSFER, true);
-		$result = $vurl->exec2();
-		if (file_exists($result['body_file']))
-		{
-			$show['usermo_violated_avatar'] = true;
-		}
-		else
-		{
-			$show['usermo_violated_avatar'] = false;
-		}
-	}
-
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_editavatar_start')) ? eval($hook) : false;
-
-	if (!$show['usermo_search'])
-	{
-		// initialise vars
-		$avatarchecked["{$userinfo['avatarid']}"] = 'checked="checked"';
-		$categorycache = array();
-		$bbavatar = array();
-		$donefirstcategory = 0;
-
-		// variables that will become templates
-		$avatarlist = '';
-		$nouseavatarchecked = '';
-		$categorybits = '';
-		$predefined_section = '';
-		$custom_section = '';
-
-		// initialise the bg class
-		$bgclass = 'alt1';
-
-		// ############### DISPLAY USER'S AVATAR ###############
-		if ($userinfo['avatarid'])
-		{
-			// using a predefined avatar
-			$avatar = $db->query_first_slave("SELECT * FROM " . TABLE_PREFIX . "avatar WHERE avatarid = " . $userinfo['avatarid']);
-			$avatarid =& $avatar['avatarid'];
-			eval('$currentavatar = "' . fetch_template('phpkd_usermo_modifyavatarbit') . '";');
-			// store avatar info in $bbavatar for later use
-			$bbavatar = $avatar;
-		}
-		else
-		{
-			// not using a predefined avatar, check for custom
-			if ($avatar = $db->query_first("SELECT dateline, width, height FROM " . TABLE_PREFIX . "customavatar WHERE userid=" . $userinfo['userid']))
-			{
-				// using a custom avatar
-				if ($vbulletin->options['usefileavatar'])
-				{
-					$userinfo['avatarurl'] = $vbulletin->options['avatarurl'] . '/avatar' . $userinfo['userid'] . '_' . $userinfo['avatarrevision'] . '.gif';
-				}
-				else
-				{
-					$userinfo['avatarurl'] = 'image.php?' . $vbulletin->session->vars['sessionurl'] . 'u=' . $userinfo['userid'] . "&amp;dateline=$avatar[dateline]";
-				}
-
-				if ($avatar['width'] AND $avatar['height'])
-				{
-					$userinfo['avatarurl'] .= "\" width=\"$avatar[width]\" height=\"$avatar[height]";
-				}
-
-				eval('$currentavatar = "' . fetch_template('phpkd_usermo_modifyavatarbit_custom') . '";');
-			}
-			else
-			{
-				// no avatar specified
-				$nouseavatarchecked = 'checked="checked"';
-				$avatarchecked[0] = '';
-				eval('$currentavatar = "' . fetch_template('phpkd_usermo_modifyavatarbit_noavatar') . '";');
-			}
-		}
-		// get rid of any lingering $avatar variables
-		unset($avatar);
-
-		$categorycache =& fetch_avatar_categories($userinfo);
-		foreach ($categorycache AS $category)
-		{
-			if (!$donefirstcategory OR $category['imagecategoryid'] == $vbulletin->GPC['categoryid'])
-			{
-				$displaycategory = $category;
-				$donefirstcategory = 1;
-			}
-		}
-
-		// get the id of the avatar category we want to display
-		if ($vbulletin->GPC['categoryid'] == 0)
-		{
-			if ($userinfo['avatarid'] != 0 AND !empty($categorycache["{$bbavatar['imagecategoryid']}"]))
-			{
-				$displaycategory = $bbavatar;
-			}
-
-			$vbulletin->GPC['categoryid'] = $displaycategory['imagecategoryid'];
-		}
-
-		// make the category <select> list
-		$optionselected["{$vbulletin->GPC['categoryid']}"] = 'selected="selected"';
-		if (count($categorycache) > 1)
-		{
-			$show['categories'] = true;
-			foreach ($categorycache AS $category)
-			{
-				$thiscategoryid = $category['imagecategoryid'];
-				$selected = iif($thiscategoryid == $vbulletin->GPC['categoryid'], ' selected="selected"', '');
-				eval('$categorybits .= "' . fetch_template('phpkd_usermo_modifyavatar_category') . '";');
-			}
-		}
-		else
-		{
-			$show['categories'] = false;
-			$categorybits = '';
-		}
-
-		// ############### GET TOTAL NUMBER OF AVATARS IN THIS CATEGORY ###############
-		// get the total number of avatars in this category
-		$totalavatars = $categorycache["{$vbulletin->GPC['categoryid']}"]['avatars'];
-
-		// get perpage parameters for table display
-		$perpage = $vbulletin->options['numavatarsperpage'];
-		sanitize_pageresults($totalavatars, $vbulletin->GPC['pagenumber'], $perpage, 100, 25);
-		// get parameters for query limits
-		$startat = ($vbulletin->GPC['pagenumber'] - 1) * $perpage;
-
-		// make variables for 'displaying avatars x to y of z' text
-		$first = $startat + 1;
-		$last = $startat + $perpage;
-		if ($last > $totalavatars)
-		{
-			$last = $totalavatars;
-		}
-
-		// ############### DISPLAY PREDEFINED AVATARS ###############
-		if ($totalavatars)
-		{
-			$pagenav = construct_page_nav($vbulletin->GPC['pagenumber'], $perpage, $totalavatars, 'profile.php?' . $vbulletin->session->vars['sessionurl'] . 'do=usermo_editavatar&amp;categoryid=' . $vbulletin->GPC['categoryid']);
-
-			$avatars = $db->query_read_slave("
-				SELECT avatar.*, imagecategory.title AS category
-				FROM " . TABLE_PREFIX . "avatar AS avatar LEFT JOIN " . TABLE_PREFIX . "imagecategory AS imagecategory USING(imagecategoryid)
-				WHERE minimumposts <= " . $userinfo['posts'] . "
-				AND avatar.imagecategoryid=" . $vbulletin->GPC['categoryid'] . "
-				AND avatarid <> " . $userinfo['avatarid'] . "
-				ORDER BY avatar.displayorder
-				LIMIT $startat,$perpage
-			");
-			$avatarsonthispage = $db->num_rows($avatars);
-
-			$cols = intval($vbulletin->options['numavatarswide']);
-			$cols = iif($cols, $cols, 5);
-			$cols = iif($cols > $avatarsonthispage, $avatarsonthispage, $cols);
-
-			$bits = array();
-			while ($avatar = $db->fetch_array($avatars))
-			{
-				$categoryname = $avatar['category'];
-				$avatarid =& $avatar['avatarid'];
-
-				($hook = vBulletinHook::fetch_hook('profile_usermo_editavatar_bit')) ? eval($hook) : false;
-
-				eval('$bits[] = "' . fetch_template('phpkd_usermo_modifyavatarbit') . '";');
-				if (sizeof($bits) == $cols)
-				{
-					$avatarcells = implode('', $bits);
-					$bits = array();
-					eval('$avatarlist .= "' . fetch_template('phpkd_usermo_help_avatars_row') . '";');
-					exec_switch_bg();
-				}
-			}
-
-			// initialize remaining columns
-			$remainingcolumns = 0;
-
-			$remaining = sizeof($bits);
-			if ($remaining)
-			{
-				$remainingcolumns = $cols - $remaining;
-				$avatarcells = implode('', $bits);
-				eval('$avatarlist .= "' . fetch_template('phpkd_usermo_help_avatars_row') . '";');
-				exec_switch_bg();
-			}
-
-			$show['forumavatars'] = true;
-		}
-		else
-		{
-			$show['forumavatars'] = false;
-		}
-		// end code for predefined avatars
-
-		// ############### DISPLAY CUSTOM AVATAR CONTROLS ###############
-		require_once(DIR . '/includes/functions_file.php');
-		$inimaxattach = fetch_max_upload_size();
-
-		if ($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canuseavatar'])
-		{
-			$show['customavatar'] = true;
-			$show['customavatar_url'] = (ini_get('allow_url_fopen') != 0 OR function_exists('curl_init'));
-
-			$userinfo['permissions']['avatarmaxsize'] = vb_number_format($userinfo['permissions']['avatarmaxsize'], 1, true);
-
-			$maxnote = '';
-			if ($userinfo['permissions']['avatarmaxsize'] AND ($userinfo['permissions']['avatarmaxwidth'] OR $userinfo['permissions']['avatarmaxheight']))
-			{
-				$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x_y_or_z'], $userinfo['username'], $userinfo['permissions']['avatarmaxwidth'], $userinfo['permissions']['avatarmaxheight'], $userinfo['permissions']['avatarmaxsize']);
-			}
-			else if ($userinfo['permissions']['avatarmaxsize'])
-			{
-				$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x'], $userinfo['username'], $userinfo['permissions']['avatarmaxsize']);
-			}
-			else if ($userinfo['permissions']['avatarmaxwidth'] OR $userinfo['permissions']['avatarmaxheight'])
-			{
-				$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x_y_pixels'], $userinfo['username'], $userinfo['permissions']['avatarmaxwidth'], $userinfo['permissions']['avatarmaxheight']);
-			}
-
-			$show['maxnote'] = (!empty($maxnote)) ? true : false;
-		}
-		else
-		{
-			$show['customavatar'] = false;
-		}
-	}
-
-	// draw cp nav bar
-	construct_usercp_nav('usermo_editavatar');
-
-	$navbits[''] = construct_phrase($vbphrase['phpkd_usermo_edit_avatar'], iif($userinfo['username'], $userinfo['username'], $vbphrase['user']));
-	$templatename = 'phpkd_usermo_modifyavatar';
-}
-
-// ############################### start update avatar ###############################
-if ($_POST['do'] == 'usermo_updateavatar')
-{
-	$vbulletin->input->clean_array_gpc('p', array(
-		'avatarid'  => TYPE_INT,
-		'avatarurl' => TYPE_STR,
-	));
-
-	if (!$vbulletin->options['avatarenabled'])
-	{
-		eval(standard_error(fetch_error('avatardisabled')));
-	}
-
-	if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageavatar']) AND !can_moderate(0, 'caneditavatar'))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_no_permission_avatars')));
-	}
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_updateavatar_start')) ? eval($hook) : false;
-
-	$useavatar = iif($vbulletin->GPC['avatarid'] == -1, 0, 1);
-
-	if ($useavatar)
-	{
-		if ($vbulletin->GPC['avatarid'] == 0 AND ($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canuseavatar']))
-		{
-			$vbulletin->input->clean_gpc('f', 'upload', TYPE_FILE);
-
-			// begin custom avatar code
-			require_once(DIR . '/includes/class_upload.php');
-			require_once(DIR . '/includes/class_image.php');
-
-			$upload = new vB_Upload_Userpic($vbulletin);
-
-			$upload->data =& datamanager_init('Userpic_Avatar', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-			$upload->image =& vB_Image::fetch_library($vbulletin);
-			$upload->userinfo =& $userinfo;
-			$upload->maxwidth = $userinfo['permissions']['avatarmaxwidth'];
-			$upload->maxheight = $userinfo['permissions']['avatarmaxheight'];
-			$upload->maxuploadsize = $userinfo['permissions']['avatarmaxsize'];
-			$upload->allowanimation = ($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['cananimateavatar']) ? true : false;
-
-			if (!$upload->process_upload($vbulletin->GPC['avatarurl']))
-			{
-				eval(standard_error($upload->fetch_error()));
-			}
-		}
-		else
-		{
-			// start predefined avatar code
-			$vbulletin->GPC['avatarid'] = verify_id('avatar', $vbulletin->GPC['avatarid']);
-			$avatarinfo = $db->query_first_slave("
-				SELECT avatarid, minimumposts, imagecategoryid
-				FROM " . TABLE_PREFIX . "avatar
-				WHERE avatarid = " . $vbulletin->GPC['avatarid']
-			);
-
-			if ($avatarinfo['minimumposts'] > $userinfo['posts'])
-			{
-				// not enough posts error
-				eval(standard_error(fetch_error('phpkd_usermo_avatarmoreposts', $userinfo['username'])));
-			}
-
-			$membergroups = fetch_membergroupids_array($userinfo);
-
-			$avperms = $db->query_read_slave("
-				SELECT usergroupid
-				FROM " . TABLE_PREFIX . "imagecategorypermission
-				WHERE imagecategoryid = $avatarinfo[imagecategoryid]
-			");
-
-			$noperms = array();
-			while ($avperm = $db->fetch_array($avperms))
-			{
-				$noperms[] = $avperm['usergroupid'];
-			}
-
-			if (!count(array_diff($membergroups, $noperms)))
-			{
-				eval(standard_error(fetch_error('invalid_avatar_specified')));
-			}
-
-			$userpic =& datamanager_init('Userpic_Avatar', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-			$userpic->condition = 'userid = ' . $userinfo['userid'];
-			$userpic->delete();
-
-			// end predefined avatar code
-		}
-	}
-	else
-	{
-		// not using an avatar
-		$vbulletin->GPC['avatarid'] = 0;
-		$userpic =& datamanager_init('Userpic_Avatar', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-		$userpic->condition = 'userid = ' . $userinfo['userid'];
-		$userpic->delete();
-	}
-
-	// init user data manager
-	$userdata =& datamanager_init('User', $vbulletin, ERRTYPE_STANDARD);
-	$userdata->set_existing($userinfo);
-
-	$userdata->set('avatarid', $vbulletin->GPC['avatarid']);
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_updateavatar_complete')) ? eval($hook) : false;
-
-	$userdata->save();
-
-	// LOGGING USERMO
-	if ($show['logactions'])
-	{
-		$usermolog = array(
-			'processedid' => $userinfo['userid']
-		);
-		log_usermo_action($usermolog, 'usermo_editavatar');
-	}
-
-	$vbulletin->url = 'profile.php?' . $vbulletin->session->vars['sessionurl'] . 'do=usermo_editavatar&amp;u=' . $userinfo['userid'];
-	eval(print_standard_redirect('redirect_usermo_updatethanks'));
-}
-
-
-// ############################################################################
-// ########################## EDIT PROFILE PICTURE ############################
-// ############################################################################
-if ($_REQUEST['do'] == 'usermo_editprofilepic')
-{
-	if (!$vbulletin->options['profilepicenabled'])
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_profilepicdisabled')));
-	}
-
-	if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageprofilepicture']) AND !can_moderate(0, 'caneditprofilepic'))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_no_permission_profilepicture')));
-	}
-
-	if (!empty($userinfo['userid']) AND !($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canprofilepic']))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_user_has_no_perms', $vbphrase['profile_picture'])));
-	}
-
-	if ($vbulletin->options['phpkd_usermo_violated_profilepic'])
-	{
-		require_once(DIR . '/includes/class_vurl.php');
-		$vurl = new vB_vURL($vbulletin);
-		$vurl->set_option(VURL_URL, $vbulletin->options['phpkd_usermo_violated_profilepic']);
-		$vurl->set_option(VURL_HEADER, true);
-		$vurl->set_option(VURL_RETURNTRANSFER, true);
-		$result = $vurl->exec2();
-		if (file_exists($result['body_file']))
-		{
-			$show['usermo_violated_profilepic'] = true;
-		}
-		else
-		{
-			$show['usermo_violated_profilepic'] = false;
-		}
-	}
-
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_editprofilepic')) ? eval($hook) : false;
-
-	if (!$show['usermo_search'])
-	{
-		if ($profilepic = $db->query_first("
-			SELECT userid, dateline, height, width
-			FROM " . TABLE_PREFIX . "customprofilepic
-			WHERE userid = " . $userinfo['userid']
-		))
-		{
-			if ($vbulletin->options['usefileavatar'])
-			{
-				$userinfo['profileurl'] = $vbulletin->options['profilepicurl'] . '/profilepic' . $userinfo['userid'] . '_' . $userinfo['profilepicrevision'] . '.gif';
-			}
-			else
-			{
-				$userinfo['profileurl'] = 'image.php?' . $vbulletin->session->vars['sessionurl'] . 'u=' . $userinfo['userid'] . "&amp;dateline=$profilepic[dateline]&amp;type=profile";
-			}
-
-			if ($profilepic['width'] AND $profilepic['height'])
-			{
-				$userinfo['profileurl'] .= "\" width=\"$profilepic[width]\" height=\"$profilepic[height]";
-			}
-			$show['profilepic'] = true;
-		}
-
-		$userinfo['permissions']['profilepicmaxsize'] = vb_number_format($userinfo['permissions']['profilepicmaxsize'], 1, true);
-
-		$maxnote = '';
-		if ($userinfo['permissions']['profilepicmaxsize'] AND ($userinfo['permissions']['profilepicmaxwidth'] OR $userinfo['permissions']['profilepicmaxheight']))
-		{
-			$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x_y_or_z'], $userinfo['username'], $userinfo['permissions']['profilepicmaxwidth'], $userinfo['permissions']['profilepicmaxheight'], $userinfo['permissions']['profilepicmaxsize']);
-		}
-		else if ($userinfo['permissions']['profilepicmaxsize'])
-		{
-			$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x'], $userinfo['username'], $userinfo['permissions']['profilepicmaxsize']);
-		}
-		else if ($userinfo['permissions']['profilepicmaxwidth'] OR $userinfo['permissions']['profilepicmaxheight'])
-		{
-			$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x_y_pixels'], $userinfo['username'], $userinfo['permissions']['profilepicmaxwidth'], $userinfo['permissions']['profilepicmaxheight']);
-		}
-		$show['maxnote'] = (!empty($maxnote)) ? true : false;
-		$show['profilepic_url'] = (ini_get('allow_url_fopen') != 0 OR function_exists('curl_init'));
-	}
-
-	// draw cp nav bar
-	construct_usercp_nav('usermo_editprofilepic');
-
-	$navbits[''] = construct_phrase($vbphrase['phpkd_usermo_edit_profile_picture'], $userinfo['username']);
-	$templatename = 'phpkd_usermo_modifyprofilepic';
-}
-
-
-// ############################### start update profile pic###########################
-if ($_POST['do'] == 'usermo_updateprofilepic')
-{
-	$vbulletin->input->clean_array_gpc('p', array(
-		'deleteprofilepic' => TYPE_BOOL,
-		'avatarurl'        => TYPE_STR,
-	));
-
-	if (!$vbulletin->options['profilepicenabled'])
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_profilepicdisabled')));
-	}
-
-	if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageprofilepicture']) AND !can_moderate(0, 'caneditprofilepic'))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_no_permission_profilepicture')));
-	}
-
-	if (!($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canprofilepic']))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_user_has_no_perms', $vbphrase['profile_picture'])));
-	}
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_updateprofilepic_start')) ? eval($hook) : false;
-
-	if ($vbulletin->GPC['deleteprofilepic'])
-	{
-		$userpic =& datamanager_init('Userpic_Profilepic', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-		$userpic->condition = "userid = " . $userinfo['userid'];
-		$userpic->delete();
-	}
-	else
-	{
-		$vbulletin->input->clean_gpc('f', 'upload', TYPE_FILE);
-
-		require_once(DIR . '/includes/class_upload.php');
-		require_once(DIR . '/includes/class_image.php');
-
-		$upload = new vB_Upload_Userpic($vbulletin);
-
-		$upload->data =& datamanager_init('Userpic_Profilepic', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-		$upload->image =& vB_Image::fetch_library($vbulletin);
-		$upload->userinfo =& $userinfo;
-		$upload->maxwidth = $userinfo['permissions']['profilepicmaxwidth'];
-		$upload->maxheight = $userinfo['permissions']['profilepicmaxheight'];
-		$upload->maxuploadsize = $userinfo['permissions']['profilepicmaxsize'];
-		$upload->allowanimation = ($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['cananimateprofilepic']) ? true : false;
-
-		if (!$upload->process_upload($vbulletin->GPC['avatarurl']))
-		{
-			eval(standard_error($upload->fetch_error()));
-		}
-	}
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_updateprofilepic_complete')) ? eval($hook) : false;
-
-	// LOGGING USERMO
-	if ($show['logactions'])
-	{
-		$usermolog = array(
-			'processedid' => $userinfo['userid']
-		);
-		log_usermo_action($usermolog, 'usermo_editprofilepic');
-	}
-
-	$vbulletin->url = 'profile.php?' . $vbulletin->session->vars['sessionurl'] . 'do=usermo_editprofilepic&amp;u=' . $userinfo['userid'];
-	eval(print_standard_redirect('redirect_usermo_updatethanks'));
-}
-
-// ############################################################################
-// ############################## EDIT SIGNATURE ##############################
-// ############################################################################
-
-// ########################### start update signature #########################
-if ($_POST['do'] == 'usermo_updatesignature')
-{
-	$vbulletin->input->clean_array_gpc('p', array(
-		'wysiwyg'      => TYPE_BOOL,
-		'message'      => TYPE_STR,
-		'preview'      => TYPE_STR,
-		'deletesigpic' => TYPE_BOOL,
-		'sigpicurl'    => TYPE_STR,
-	));
-
-	if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managesignature']) AND !can_moderate(0, 'caneditsigs'))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_no_permission_signature')));
-	}
-
-	if (!($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canusesignature']))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_nosignaturepermission', $userinfo['username'])));
-	}
-
-	if ($userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['cansigpic'])
-	{
-		$vbulletin->input->clean_gpc('f', 'upload', TYPE_FILE);
-	}
-
-	require_once(DIR . '/includes/class_bbcode.php');
-	require_once(DIR . '/includes/class_sigparser.php');
-	require_once(DIR . '/includes/functions_misc.php');
-
-	$errors = array();
-
-	// DO WYSIWYG processing to get to BB code.
-	if ($vbulletin->GPC['wysiwyg'])
-	{
-		require_once(DIR . '/includes/functions_wysiwyg.php');
-
-		$signature = convert_wysiwyg_html_to_bbcode($vbulletin->GPC['message'], $userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['allowhtml']);
-	}
-	else
-	{
-		$signature = $vbulletin->GPC['message'];
-	}
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_updatesignature_start')) ? eval($hook) : false;
-
-	// handle image uploads
-	if ($vbulletin->GPC['deletesigpic'])
-	{
-		if (preg_match('#\[sigpic\](.*)\[/sigpic\]#siU', $signature))
-		{
-			$errors[] = fetch_error('phpkd_usermo_sigpic_in_use', $userinfo['username']);
-		}
-		else
-		{
-			$userpic =& datamanager_init('Userpic_Sigpic', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-			$userpic->condition = "userid = " . $userinfo['userid'];
-			$userpic->delete();
-		}
-
-		$redirectsig = true;
-	}
-	else if (($vbulletin->GPC['sigpicurl'] != '' AND $vbulletin->GPC['sigpicurl'] != 'http://www.') OR $vbulletin->GPC['upload']['size'] > 0)
-	{
-		require_once(DIR . '/includes/class_upload.php');
-		require_once(DIR . '/includes/class_image.php');
-
-		$upload = new vB_Upload_Userpic($vbulletin);
-
-		$upload->data =& datamanager_init('Userpic_Sigpic', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-		$upload->image =& vB_Image::fetch_library($vbulletin);
-		$upload->userinfo =& $userinfo;
-		$upload->maxwidth = $userinfo['permissions']['sigpicmaxwidth'];
-		$upload->maxheight = $userinfo['permissions']['sigpicmaxheight'];
-		$upload->maxuploadsize = $userinfo['permissions']['sigpicmaxsize'];
-		$upload->allowanimation = ($userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['cananimatesigpic']) ? true : false;
-
-		if (!$upload->process_upload($vbulletin->GPC['sigpicurl']))
-		{
-			eval(standard_error($upload->fetch_error()));
-		}
-		$redirectsig = true;
-		$userinfo['sigpicrevision']++;
-	}
-
-	// Censored Words
-	$censor_signature = fetch_censored_text($signature);
-
-	if ($signature != $censor_signature)
-	{
-		$signature = $censor_signature;
-		$errors[] = fetch_error('phpkd_usermo_censoredword');
-		unset($censor_signature);
-	}
-
-	// Max number of images in the sig if imgs are allowed.
-	if ($userinfo['permissions']['sigmaximages'])
-	{
-		// Parsing the signature into BB code.
-		require_once(DIR . '/includes/class_bbcode_alt.php');
-		$bbcode_parser =& new vB_BbCodeParser_ImgCheck($vbulletin, fetch_tag_list());
-		$bbcode_parser->set_parse_userinfo($userinfo, $userinfo['permissions']);
-		$parsedsig = $bbcode_parser->parse($signature, 'signature');
-
-		$imagecount = fetch_character_count($parsedsig, '<img');
-
-		// Count the images
-		if ($imagecount > $userinfo['permissions']['sigmaximages'])
-		{
-			$vbulletin->GPC['preview'] = true;
-			$errors[] = fetch_error('phpkd_usermo_toomanyimages', $imagecount, $userinfo['username'], $userinfo['permissions']['sigmaximages']);
-		}
-	}
-
-	// Count the raw characters in the signature
-	if ($userinfo['permissions']['sigmaxrawchars'] AND vbstrlen($signature) > $userinfo['permissions']['sigmaxrawchars'])
-	{
-		$vbulletin->GPC['preview'] = true;
-		$errors[] = fetch_error('phpkd_usermo_sigtoolong_includingbbcode', $userinfo['username'], $userinfo['permissions']['sigmaxrawchars']);
-	}
-	// Count the characters after stripping in the signature
-	else if ($userinfo['permissions']['sigmaxchars'] AND (vbstrlen(strip_bbcode($signature, false, false, false)) > $userinfo['permissions']['sigmaxchars']))
-	{
-		$vbulletin->GPC['preview'] = true;
-		$errors[] = fetch_error('phpkd_usermo_sigtoolong_excludingbbcode', $userinfo['username'], $userinfo['permissions']['sigmaxchars']);
-	}
-
-	if ($userinfo['permissions']['sigmaxlines'] > 0)
-	{
-		require_once(DIR . '/includes/class_sigparser_char.php');
-		$char_counter =& new vB_SignatureParser_CharCount($vbulletin, fetch_tag_list(), $userinfo['permissions'], $userinfo['userid']);
-		$line_count_text = $char_counter->parse(trim($signature));
-
-		if ($vbulletin->options['softlinebreakchars'] > 0)
-		{
-			// implicitly wrap after X characters without a break
-			$line_count_text = preg_replace('#([^\r\n]{' . $vbulletin->options['softlinebreakchars'] . '})#', "\\1\n", $line_count_text);
-		}
-
-		// + 1, since 0 linebreaks still means 1 line
-		$line_count = substr_count($line_count_text, "\n") + 1;
-
-		if ($line_count > $userinfo['permissions']['sigmaxlines'])
-		{
-			$vbulletin->GPC['preview'] = true;
-			$errors[] = fetch_error('phpkd_usermo_sigtoomanylines', $userinfo['username'], $userinfo['permissions']['sigmaxlines']);
-		}
-	}
-
-	if ($userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['canbbcode'])
-	{
-		// Get the files we need
-		require_once(DIR . '/includes/functions_newpost.php');
-
-		// add # to color tags using hex if it's not there
-		$signature = preg_replace('#\[color=(&quot;|"|\'|)([a-f0-9]{6})\\1]#i', '[color=\1#\2\1]', $signature);
-
-		// Turn the text into bb code.
-		$signature = convert_url_to_bbcode($signature);
-
-		// Create the parser with the users sig permissions
-		$sig_parser =& new vB_SignatureParser($vbulletin, fetch_tag_list(), $userinfo['permissions'], $userinfo['userid']);
-
-		// Parse the signature
-		$previewmessage = $sig_parser->parse($signature);
-
-		if ($error_num = count($sig_parser->errors))
-		{
-			foreach ($sig_parser->errors AS $tag => $error_phrase)
-			{
-				$errors[] = fetch_error($error_phrase, $tag);
-			}
-		}
-
-		unset($sig_parser, $tag_list, $sig_tag_token_array, $results);
-	}
-
-	// If they are previewing the signature or there were usergroup rules broken and there are $errors[]
-	if (!empty($errors) OR $vbulletin->GPC['preview'] != '')
-	{
-		if (!empty($errors))
-		{
-			$errorlist = '';
-			foreach ($errors AS $key => $errormessage)
-			{
-				eval('$errorlist .= "' . fetch_template('phpkd_usermo_newpost_errormessage') . '";');
-			}
-			$show['errors'] = true;
-		}
-
-		$bbcode_parser =& new vB_BbCodeParser($vbulletin, fetch_tag_list());
-		$bbcode_parser->set_parse_userinfo($userinfo, $userinfo['permissions']);
-		$previewmessage = $bbcode_parser->parse($signature, 'signature');
-
-		// save a conditional by just overwriting the phrase
-		$vbphrase['submit_message'] =& $vbphrase['save_signature'];
-		eval('$preview = "' . fetch_template('phpkd_usermo_newpost_preview') . '";');
-		$_REQUEST['do'] = 'usermo_editsignature';
-
-		$preview_error_signature = $signature;
-	}
-	else
-	{
-		// init user data manager
-		$userdata =& datamanager_init('User', $vbulletin, ERRTYPE_STANDARD);
-		$userdata->set_existing($userinfo);
-
-		$userdata->set('signature', $signature);
-
-		($hook = vBulletinHook::fetch_hook('profile_usermo_updatesignature_complete')) ? eval($hook) : false;
-
-		$userdata->save();
-
-		// LOGGING USERMO
-		if ($show['logactions'])
-		{
-			$usermolog = array(
-				'processedid' => $userinfo['userid']
-			);
-			log_usermo_action($usermolog, 'usermo_editsignature');
-		}
-
-		if ($redirectsig)
-		{
-			$vbulletin->url = 'profile.php?' . $vbulletin->session->vars['sessionurl'] . 'do=usermo_editsignature&amp;u=' . $userinfo['userid'] . '&amp;url=' . $vbulletin->url . '#sigpic';
-		}
-		eval(print_standard_redirect('redirect_usermo_updatethanks'));
-	}
-}
-
-// ############################### start update signature pic ###########################
-if ($_POST['do'] == 'usermo_updatesigpic')
-{
-	$vbulletin->input->clean_array_gpc('p', array(
-		'deletesigpic' => TYPE_BOOL,
-		'sigpicurl'    => TYPE_STR,
-	));
-
-	if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managesignature']) AND !can_moderate(0, 'caneditsigs'))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_no_permission_signature')));
-	}
-
-	if (!($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canusesignature']))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_nosignaturepermission', $userinfo['username'])));
-	}
-
-	if (!($userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['cansigpic']))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_user_has_no_perms_cansigpic')));
-	}
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_updatesigpic_start')) ? eval($hook) : false;
-
-	if ($vbulletin->GPC['deletesigpic'])
-	{
-		$userpic =& datamanager_init('Userpic_Sigpic', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-		$userpic->condition = "userid = " . $userinfo['userid'];
-		$userpic->delete();
-	}
-	else
-	{
-		$vbulletin->input->clean_gpc('f', 'upload', TYPE_FILE);
-
-		require_once(DIR . '/includes/class_upload.php');
-		require_once(DIR . '/includes/class_image.php');
-
-		$upload = new vB_Upload_Userpic($vbulletin);
-
-		$upload->data =& datamanager_init('Userpic_Sigpic', $vbulletin, ERRTYPE_STANDARD, 'userpic');
-		$upload->image =& vB_Image::fetch_library($vbulletin);
-		$upload->userinfo =& $userinfo;
-		$upload->maxwidth = $userinfo['permissions']['sigpicmaxwidth'];
-		$upload->maxheight = $userinfo['permissions']['sigpicmaxheight'];
-		$upload->maxuploadsize = $userinfo['permissions']['sigpicmaxsize'];
-		$upload->allowanimation = ($userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['cananimatesigpic']) ? true : false;
-
-		if (!$upload->process_upload($vbulletin->GPC['sigpicurl']))
-		{
-			eval(standard_error($upload->fetch_error()));
-		}
-	}
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_updatesigpic_complete')) ? eval($hook) : false;
-
-	// LOGGING USERMO
-	if ($show['logactions'])
-	{
-		$usermolog = array(
-			'processedid' => $userinfo['userid']
-		);
-		log_usermo_action($usermolog, 'usermo_editsignature');
-	}
-
-	$vbulletin->url = 'profile.php?' . $vbulletin->session->vars['sessionurl'] . 'do=usermo_editsignature&amp;u=' . $userinfo['userid'] . '#sigpic';
-	eval(print_standard_redirect('redirect_usermo_updatethanks'));
-}
-
-
-// ############################### start edit signature ###########################
-if ($_REQUEST['do'] == 'usermo_editsignature')
-{
-	if (!($permissions['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managesignature']) AND !can_moderate(0, 'caneditsigs'))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_no_permission_signature')));
-	}
-
-	if (!empty($userinfo['userid']) AND !($userinfo['permissions']['genericpermissions'] & $vbulletin->bf_ugp_genericpermissions['canusesignature']))
-	{
-		eval(standard_error(fetch_error('phpkd_usermo_nosignaturepermission', $userinfo['username'])));
-	}
-
-	require_once(DIR . '/includes/functions_newpost.php');
-
-	($hook = vBulletinHook::fetch_hook('profile_usermo_editsignature_start')) ? eval($hook) : false;
-
-	if (!$show['usermo_search'])
-	{
-		// Build the permissions to display
-		require_once(DIR . '/includes/class_bbcode.php');
-		require_once(DIR . '/includes/class_sigparser.php');
-
-		// Create the parser with the users sig permissions
-		$sig_parser =& new vB_SignatureParser($vbulletin, fetch_tag_list(), $userinfo['permissions'], $userinfo['userid']);
-
-		// Build $show variables for each signature bitfield permission
-		foreach ($vbulletin->bf_ugp_signaturepermissions AS $bit_name => $bit_value)
-		{
-			if ($bbcode = preg_match('#canbbcode(\w+)#i', $bit_name, $matches) AND $matches[1])
-			{
-				$term = $matches[1] == 'link' ? 'URL' : strtoupper($matches[1]);
-				$show["$bit_name"] = ($userinfo['permissions']['signaturepermissions'] & $bit_value AND $vbulletin->options['allowedbbcodes'] & @constant('ALLOW_BBCODE_' . $term))  ? true : false;
-			}
-			else
-			{
-				$show["$bit_name"] = ($userinfo['permissions']['signaturepermissions'] & $bit_value ? true : false);
-			}
-		}
-
-		// Build variables for the remaining signature permissions
-		$sigperms_display = array(
-			'sigmaxchars'     => vb_number_format($userinfo['permissions']['maxchars']),
-			'sigmaxlines'     => vb_number_format($userinfo['permissions']['maxlines']),
-			'sigpicmaxwidth'  => vb_number_format($userinfo['permissions']['sigpicmaxwidth']),
-			'sigpicmaxheight' => vb_number_format($userinfo['permissions']['sigpicmaxheight']),
-			'sigpicmaxsize'   => vb_number_format($userinfo['permissions']['sigpicmaxsize'], 1, true)
-		);
-
-		if ($preview_error_signature)
-		{
-			$signature = $preview_error_signature;
-		}
-		else
-		{
-			$signature = $userinfo['signature'];
-		}
-
-		// Free the memory, unless we need it below.
-		if (!$signature)
-		{
-			unset($sig_parser);
-		}
-
-		if ($signature)
-		{
-			if (!$previewmessage)
-			{
-				require_once(DIR . '/includes/class_bbcode.php');
-				$bbcode_parser =& new vB_BbCodeParser($vbulletin, fetch_tag_list());
-				$bbcode_parser->set_parse_userinfo($userinfo, $userinfo['permissions']);
-				$previewmessage = $bbcode_parser->parse($signature, 'signature');
-			}
-
-			// save a conditional by just overwriting the phrase
-			$vbphrase['submit_message'] =& $vbphrase['save_signature'];
-			eval('$preview = "' . fetch_template('phpkd_usermo_newpost_preview') . '";');
-		}
-
-		require_once(DIR . '/includes/functions_editor.php');
-
-		// set message box width to usercp size
-		$stylevar['messagewidth'] = $stylevar['messagewidth_usercp'];
-		$editorid = construct_edit_toolbar(
-			htmlspecialchars_uni($signature),
-			0,
-			'signature',
-			$userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['allowsmilies']
-		);
-
-		$show['canbbcode'] = ($userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['canbbcode']) ? true : false;
-
-		// ############### DISPLAY SIG IMAGE CONTROLS ###############
-		require_once(DIR . '/includes/functions_file.php');
-		$inimaxattach = fetch_max_upload_size();
-
-		if ($userinfo['permissions']['signaturepermissions'] & $vbulletin->bf_ugp_signaturepermissions['cansigpic'])
-		{
-			$show['cansigpic'] = true;
-			$show['sigpic_url'] = (ini_get('allow_url_fopen') != 0 OR function_exists('curl_init'));
-
-			$maxnote = '';
-			if ($userinfo['permissions']['sigpicmaxsize'] AND ($userinfo['permissions']['sigpicmaxwidth'] OR $userinfo['permissions']['sigpicmaxheight']))
-			{
-				$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x_y_or_z'], $userinfo['username'], $sigperms_display['sigpicmaxwidth'], $sigperms_display['sigpicmaxheight'], $sigperms_display['sigpicmaxsize']);
-			}
-			else if ($userinfo['permissions']['sigpicmaxsize'])
-			{
-				$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x'], $userinfo['username'], $sigperms_display['sigpicmaxsize']);
-			}
-			else if ($userinfo['permissions']['sigpicmaxwidth'] OR $userinfo['permissions']['sigpicmaxheight'])
-			{
-				$maxnote = construct_phrase($vbphrase['phpkd_usermo_note_maximum_size_x_y_pixels'], $userinfo['username'], $sigperms_display['sigpicmaxwidth'], $sigperms_display['sigpicmaxheight']);
-			}
-			$show['maxnote'] = (!empty($maxnote)) ? true : false;
-
-			// Get the current sig image info.
-			if ($sig_image = $db->query_first("SELECT dateline, filename, filedata FROM " . TABLE_PREFIX . "sigpic WHERE userid = " . $userinfo['userid']))
-			{
-				if ($sig_image['filedata'] != '')
-				{
-					// sigpic stored in the DB
-					$sigpicurl = 'image.php?' . $vbulletin->session->vars['sessionurl'] . 'type=sigpic&amp;userid=' . $userinfo['userid'] . "&amp;dateline=$sig_image[dateline]";
-				}
-				else
-				{
-					// sigpic stored in the FS
-					$sigpicurl = $vbulletin->options['sigpicpath'] . '/sigpic' . $userinfo['userid'] . '_' . $userinfo['sigpicrevision'] . '.gif';
-				}
-			}
-			else // No sigpic yet
-			{
-				$sigpicurl = false;
-			}
-		}
-		else
-		{
-			$show['cansigpic'] = false;
-		}
-	}
-
-	construct_usercp_nav('usermo_editsignature');
-
-	$navbits[''] = construct_phrase($vbphrase['phpkd_usermo_edit_signature'], $userinfo['username']);
-	$templatename = 'phpkd_usermo_modifysignature';
-	$url =& $vbulletin->url;
-}]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Template Groups ]]]></title>
 			<hookname>template_groups</hookname>
-			<phpcode><![CDATA[$only['phpkd_usermo_'] = $vbphrase['phpkd_usermo_templates'];]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ UserCP Nav Complete ]]]></title>
 			<hookname>usercp_nav_complete</hookname>
-			<phpcode><![CDATA[if ($show['usermo_editavatar'] OR $show['usermo_editprofilepic'] OR $show['usermo_editsignature'])
-{
-	eval('$template_hook[usercp_navbar_bottom] .= " ' . fetch_template('phpkd_usermo_usercp') . '";');
-}]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ UserCP Nav Start ]]]></title>
 			<hookname>usercp_nav_start</hookname>
-			<phpcode><![CDATA[$usermo_nav = array();
-if ($vbulletin->options['avatarenabled'] AND (($vbulletin->userinfo['permissions']['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageavatar']) OR can_moderate(0, 'caneditavatar')))
-{
-	$usermo_nav[] = "usermo_editavatar";
-	$show['usermo_editavatar'] = true;
-}
-else
-{
-	$show['usermo_editavatar'] = false;
-}
-
-if ($vbulletin->options['profilepicenabled'] AND (($vbulletin->userinfo['permissions']['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['manageprofilepicture']) OR can_moderate(0, 'caneditprofilepic')))
-{
-	$usermo_nav[] = "usermo_editprofilepic";
-	$show['usermo_editprofilepic'] = true;
-}
-else
-{
-	$show['usermo_editprofilepic'] = false;
-}
-
-if ((($vbulletin->userinfo['permissions']['phpkdusermo'] & $vbulletin->bf_ugp_phpkdusermo['managesignature']) OR can_moderate(0, 'caneditsigs')))
-{
-	$usermo_nav[] = "usermo_editsignature";
-	$show['usermo_editsignature'] = true;
-}
-else
-{
-	$show['usermo_editsignature'] = false;
-}
-
-
-if (is_array($usermo_nav) AND !empty($usermo_nav))
-{
-	$cells = array_merge($cells, $usermo_nav);
-}]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[User Moderating Options - [ Initiation Start-Up ]]]></title>
+			<hookname>init_startup</hookname>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
 		</plugin>
 	</plugins>
 	<phrases>
@@ -2052,6 +846,7 @@ if (is_array($usermo_nav) AND !empty($usermo_nav))
 			<phrase name="phpkd_usermo_manageavatar" date="1215106592" username="PHPKD" version="1.0.0"><![CDATA[Can Moderate Avatars]]></phrase>
 			<phrase name="phpkd_usermo_managed" date="1215106575" username="PHPKD" version="1.0.0"><![CDATA[Can Be Moderated<dfn>(If set to "yes" then other usergroups that have permissions to moderate user's options will be able to moderate this usergroups' user's options, otherwise they can't.)</dfn>]]></phrase>
 			<phrase name="phpkd_usermo_manageprofilepicture" date="1215106638" username="PHPKD" version="1.0.0"><![CDATA[Can Moderate Profile Pictures]]></phrase>
+			<phrase name="phpkd_usermo_managealbum" date="1225969007" username="PHPKD" version="1.1.1"><![CDATA[Can Moderate Albums]]></phrase>
 			<phrase name="phpkd_usermo_managesignature" date="1215106530" username="PHPKD" version="1.0.0"><![CDATA[Can Moderate Signatures]]></phrase>
 			<phrase name="phpkd_usermo_options" date="1214836661" username="PHPKD" version="1.0.0"><![CDATA[User Moderating Options]]></phrase>
 			<phrase name="phpkd_usermo_prunelog" date="1217934933" username="PHPKD" version="1.1.0"><![CDATA[Can Prune Log]]></phrase>
@@ -2071,6 +866,7 @@ if (is_array($usermo_nav) AND !empty($usermo_nav))
 			<phrase name="phpkd_usermo_no_permission_avatars" date="1215029138" username="PHPKD" version="1.0.0"><![CDATA[You are not authorized to edit user's avatars]]></phrase>
 			<phrase name="phpkd_usermo_no_permission_profilepicture" date="1215099069" username="PHPKD" version="1.0.0"><![CDATA[You are not authorized to edit user's profile pictures]]></phrase>
 			<phrase name="phpkd_usermo_no_permission_signature" date="1215099038" username="PHPKD" version="1.0.0"><![CDATA[You are not authorized to edit user's signatures]]></phrase>
+			<phrase name="phpkd_usermo_no_permission_albumpic" date="1225969007" username="PHPKD" version="1.1.1"><![CDATA[You are not authorized to edit album pictures]]></phrase>
 			<phrase name="phpkd_usermo_nosignaturepermission" date="1215105707" username="PHPKD" version="1.0.0"><![CDATA[Sorry, {1} is not permitted to have a signature.]]></phrase>
 			<phrase name="phpkd_usermo_sigpic_in_use" date="1215122414" username="PHPKD" version="1.0.0"><![CDATA[You may not delete {1}'s signature picture while it is in use in his signature.]]></phrase>
 			<phrase name="phpkd_usermo_sigtoolong_excludingbbcode" date="1215122781" username="PHPKD" version="1.0.0"><![CDATA[{1}'s signature cannot be longer than {2} characters <em>excluding</em> BB code markup.]]></phrase>
@@ -2080,6 +876,10 @@ if (is_array($usermo_nav) AND !empty($usermo_nav))
 		</phrasetype>
 		<phrasetype name="Front-End Redirect Messages" fieldname="frontredirect">
 			<phrase name="usermo_updatethanks" date="1215123978" username="PHPKD" version="1.0.0"><![CDATA[Thank you for updating $userinfo[username]'s profile, $bbuserinfo[username].]]></phrase>
+		</phrasetype>
+		<phrasetype name="Albums" fieldname="album">
+			<phrase name="phpkd_usermo_approve_this_picture" date="1225969007" username="PHPKD" version="1.1.1"><![CDATA[Approve]]></phrase>
+			<phrase name="phpkd_usermo_moderate_this_picture" date="1225969007" username="PHPKD" version="1.1.1"><![CDATA[Moderate]]></phrase>
 		</phrasetype>
 		<phrasetype name="GLOBAL" fieldname="global">
 			<phrase name="phpkd_usermo_edit_avatar" date="1215028879" username="PHPKD" version="1.0.0"><![CDATA[Edit {1}'s Avatar]]></phrase>
@@ -2093,7 +893,7 @@ if (is_array($usermo_nav) AND !empty($usermo_nav))
 			<phrase name="phpkd_usermo_violated_avatar_title" date="1217252037" username="PHPKD" version="1.0.1"><![CDATA[Violating Avatar]]></phrase>
 			<phrase name="phpkd_usermo_violated_profilepic_desc" date="1217254148" username="PHPKD" version="1.0.1"><![CDATA[<input class="button" onclick="vbform.avatarurl.value = '{1}'; javascript:document.vbform.submit();" type="button" value="Post violating profile picture.">]]></phrase>
 			<phrase name="phpkd_usermo_violated_profilepic_title" date="1217254074" username="PHPKD" version="1.0.1"><![CDATA[Violating Profile Picture]]></phrase>
-			<phrase name="phpkd_usermo_violated_signature_desc" date="1217946971" username="PHPKD" version="1.1.0"><![CDATA[<input class="button" onclick="vbform.message.value = '{1}'; javascript:document.vbform.submit();" type="button" value="Post violating signature content.">]]></phrase>
+			<phrase name="phpkd_usermo_violated_signature_desc" date="1217946971" username="PHPKD" version="1.1.0"><![CDATA[<input class="button" onclick="vbform.message.value = vbform.message.value + '\n{1}'; javascript:document.vbform.submit();" type="button" value="Post violating signature content.">]]></phrase>
 			<phrase name="phpkd_usermo_violated_signature_title" date="1217254793" username="PHPKD" version="1.0.1"><![CDATA[Violating Signature]]></phrase>
 		</phrasetype>
 		<phrasetype name="Logging Tools" fieldname="logging">
@@ -2102,9 +902,11 @@ if (is_array($usermo_nav) AND !empty($usermo_nav))
 			<phrase name="usermo_editavatar" date="1217941677" username="PHPKD" version="1.1.0"><![CDATA[User's Avatar Edited.]]></phrase>
 			<phrase name="usermo_editprofilepic" date="1217941693" username="PHPKD" version="1.1.0"><![CDATA[User's Profile Picture Edited.]]></phrase>
 			<phrase name="usermo_editsignature" date="1217941706" username="PHPKD" version="1.1.0"><![CDATA[User's Signature Edited.]]></phrase>
+			<phrase name="usermo_editalbumpic" date="1225969007" username="PHPKD" version="1.1.1"><![CDATA[Album Picture Edited.]]></phrase>
 			<phrase name="phpkd_usermo_log" date="1217940205" username="PHPKD" version="1.1.0"><![CDATA[User Moderating Options Log]]></phrase>
 			<phrase name="phpkd_usermo_log_viewer" date="1217940151" username="PHPKD" version="1.1.0"><![CDATA[User Moderating Options Log Viewer]]></phrase>
 			<phrase name="phpkd_usermo_log_viewer_page_x_y_there_are_z_total_log_entries" date="1217939751" username="PHPKD" version="1.1.0"><![CDATA[USERMO Log Viewer (page {1}/{2}) | There are {3} total log entries.]]></phrase>
+			<phrase name="phpkd_usermo_album_picture" date="1225969007" username="PHPKD" version="1.1.1"><![CDATA[Album Picture]]></phrase>
 		</phrasetype>
 		<phrasetype name="Posting" fieldname="posting">
 			<phrase name="phpkd_usermo_preview" date="1215106212" username="PHPKD" version="1.0.0"><![CDATA[Preview]]></phrase>

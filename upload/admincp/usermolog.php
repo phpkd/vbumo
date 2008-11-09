@@ -1,15 +1,16 @@
 <?php
 /*============================================================================*\
 || ########################################################################### ||
-|| # Product Name: User Moderating Options                    Version: 1.1.0 # ||
-|| # License Type: Custom Paid License                      $Revision$ # ||
+|| # Product Name: User Moderating Options                    Version: 1.2.0 # ||
+|| # License Number: Custom License                         $Revision$ # ||
 || # ----------------------------------------------------------------------- # ||
 || #                                                                         # ||
-|| #         Copyright ©2005-2008 PHP KingDom. All Rights Reserved.          # ||
-|| #   This product may not be redistributed in whole or significant part.   # ||
+|| #         Copyright ©2005-2008 PHP KingDom. Some Rights Reserved.         # ||
+|| #   This product may be redistributed in whole or significant part under  # ||
+|| #      "Creative Commons - Attribution-Noncommercial-Share Alike 3.0"     # ||
 || #                                                                         # ||
-|| # ----------- 'User Moderating Options' IS NOT FREE SOFTWARE ------------ # ||
-|| #  http://www.phpkd.org | http://www.phpkd.org/info/license/custompaid    # ||
+|| # ------------- 'User Moderating Options' IS FREE SOFTWARE -------------- # ||
+|| #        http://www.phpkd.net | http://go.phpkd.net/license/custom/       # ||
 || ########################################################################### ||
 \*============================================================================*/
 
@@ -60,7 +61,8 @@ if ($_REQUEST['do'] == 'view')
 	));
 
 	$princids = array(
-		'user_name'  => $vbphrase['user'],
+		'user_name'     => $vbphrase['user'],
+		'album_picture' => $vbphrase['phpkd_usermo_album_picture'],
 	);
 
 	$sqlconds = array();
@@ -122,11 +124,13 @@ if ($_REQUEST['do'] == 'view')
 	}
 
 	$logs = $db->query_read("
-		SELECT usermolog.*, user.username, processeduser.username AS user_name, processeduser.userid AS user_id
+		SELECT usermolog.*, user.username, processeduser.username AS user_name, processeduser.userid AS user_id, picture.pictureid AS album_picture, albumpicture.albumid AS album_id
 			$hook_query_fields
 		FROM " . TABLE_PREFIX . "phpkd_usermolog AS usermolog
 		LEFT JOIN " . TABLE_PREFIX . "user AS user ON (user.userid = usermolog.userid)
 		LEFT JOIN " . TABLE_PREFIX . "user AS processeduser ON (processeduser.userid = usermolog.processedid)
+		LEFT JOIN " . TABLE_PREFIX . "picture AS picture ON (picture.pictureid = usermolog.processedid)
+		LEFT JOIN " . TABLE_PREFIX . "albumpicture AS albumpicture ON (albumpicture.pictureid = picture.pictureid)
 		$hook_join_fields
 		" . (!empty($sqlconds) ? "WHERE " . implode("\r\n\tAND ", $sqlconds) : "") . "
 		ORDER BY $order
@@ -206,6 +210,9 @@ if ($_REQUEST['do'] == 'view')
 					{
 						case 'user_name':
 							$celldata .= construct_link_code($log["$sqlfield"], "user.php?" . $vbulletin->session->vars['sessionurl'] . "do=edit&u=$log[user_id]", true);
+							break;
+						case 'album_picture':
+							$celldata .= construct_link_code($log["$sqlfield"], "../album.php?" . $vbulletin->session->vars['sessionurl'] . "albumid=$log[album_id]&pictureid=$log[album_picture]", true);
 							break;
 						default:
 							$handled = false;
@@ -354,7 +361,7 @@ print_cp_footer();
 
 /*============================================================================*\
 || ########################################################################### ||
-|| # Version: 1.1.0
+|| # Version: 1.2.0
 || # $Revision$
 || # Released: $Date$
 || ########################################################################### ||
