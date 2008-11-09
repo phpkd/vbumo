@@ -15,20 +15,27 @@
 \*============================================================================*/
 
 $md5_sums = array(
+	'/' => array(
+		'usermo.php' => '84e9c7997b8345aaed1329806dff16c5',
+	),
 	'/admincp' => array(
-		'usermolog.php' => 'a5d75e0004581b707dbeef6e73066e22',
+		'usermolog.php' => '7446a1a7700e24834c702cf34fbec3e7',
 	),
 	'/includes' => array(
-		'functions_usermo_log.php' => '7af669eabf044a5eac3cc5b6dafd7d01',
+		'functions_usermo_log.php' => '59d1b5f0831329fd509b004286390a8a',
+	),
+	'/includes/phpkd' => array(
+		'usermo_functions.php' => 'ca977316d23498d291fd8504d2777513',
+		'usermo_plugins.php' => '15ed97a0006bbc40eb489a94a67f6d7e',
 	),
 	'/includes/xml' => array(
-		'bitfield_phpkd_usermo.xml' => '69196c665e135f1f56c58998a6964d69',
+		'bitfield_phpkd_usermo.xml' => '72b7ebaed65ec1e93f3dc7b393649eee',
 		'cpnav_phpkd_usermo.xml' => 'b2c674ed8d45439c7428cfc4e1685096',
-		'hooks_phpkd_usermo.xml' => '6546f5e0e778e5522d64b0963fdd7d02',
+		'hooks_phpkd_usermo.xml' => 'fdcdd13f85634b8f83ac92df1dffe0fa',
 	),
 );
 $md5_sum_softwareid = 'phpkd_usermo';
-$md5_sum_versions['phpkd_usermo'] = '1.1.0';
+$md5_sum_versions['phpkd_usermo'] = '1.2.0';
 
 /*============================================================================*\
 || ########################################################################### ||
