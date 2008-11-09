@@ -2,12 +2,13 @@
 
 <product productid="phpkd_usermo" active="1">
 	<title><![CDATA[User Moderating Options]]></title>
-	<description><![CDATA[This product allows staff to edit user's avatar, profile picture & signature inside forums without logging AdminCP/ModCP, Administrators also has the ability to control which user groups allowed to edit others avatar, profile picture and signature.]]></description>
+	<description><![CDATA[This product allows staff to edit user's avatar, profile picture, signature & album pictures inside forums without logging to AdminCP/ModCP, Administrators also has the ability to control which user groups allowed to manage others accounts.]]></description>
 	<version><![CDATA[1.2.0]]></version>
 	<revision><![CDATA[$Revision$]]></revision>
 	<released><![CDATA[$Date$]]></released>
-	<url><![CDATA[http://www.phpkd.org/forum/misc.php?do=mods&action=producthelp&pid=phpkd_usermo]]></url>
-	<versioncheckurl><![CDATA[http://www.phpkd.org/forum/misc.php?do=mods&action=productcheck&pid=phpkd_usermo]]></versioncheckurl>
+	<url><![CDATA[http://go.phpkd.net/product/phpkd_usermo]]></url>
+	<versioncheckurl><![CDATA[http://version.phpkd.net/product/phpkd_usermo]]></versioncheckurl>
+	<versiondetails><![CDATA[http://version.phpkd.net/product/phpkd_usermo/details]]></versiondetails>
 	<dependencies>
 		<dependency dependencytype="vbulletin" minversion="3.7.0" maxversion="3.7.99" />
 	</dependencies>
@@ -15,8 +16,8 @@
 		<code version="*">
 			<installcode><![CDATA[$phpkd_usermo_files = array(
 	DIR . '/usermo.php',
-	DIR . '/includes/phpkd/phpkd_usermo_plugins.php',
-	DIR . '/includes/phpkd/phpkd_usermo_functions.php',
+	DIR . '/includes/phpkd/usermo_plugins.php',
+	DIR . '/includes/phpkd/usermo_functions.php',
 	DIR . '/includes/xml/cpnav_phpkd_usermo.xml',
 	DIR . '/includes/xml/bitfield_phpkd_usermo.xml',
 	DIR . '/includes/xml/hooks_phpkd_usermo.xml',
@@ -777,62 +778,62 @@ $usermo_results_bits
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Picture Preview Mandatory Replacements ]]]></title>
 			<hookname>album_picture_complete</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Picture Bits Mandatory Replacements (Initiation) ]]]></title>
 			<hookname>album_album_query</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Picture Bits Mandatory Replacements ]]]></title>
 			<hookname>album_album_picturebit</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Albums Main Processes ]]]></title>
 			<hookname>album_start_postcheck</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Cache Templates ]]]></title>
 			<hookname>cache_templates</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Member Profile's Options ]]]></title>
 			<hookname>member_execute_start</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Postbit Display Complete ]]]></title>
 			<hookname>showthread_postbit_create</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Postbit Display Complete ]]]></title>
 			<hookname>postbit_display_complete</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Template Groups ]]]></title>
 			<hookname>template_groups</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ UserCP Nav Complete ]]]></title>
 			<hookname>usercp_nav_complete</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ UserCP Nav Start ]]]></title>
 			<hookname>usercp_nav_start</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[User Moderating Options - [ Initiation Start-Up ]]]></title>
 			<hookname>init_startup</hookname>
-			<phpcode><![CDATA[require(DIR . '/includes/phpkd/phpkd_usermo_plugins.php');]]></phpcode>
+			<phpcode><![CDATA[require(DIR . '/includes/phpkd/usermo_plugins.php');]]></phpcode>
 		</plugin>
 	</plugins>
 	<phrases>

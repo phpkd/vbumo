@@ -1,0 +1,153 @@
+/*============================================================================*\
+|| ########################################################################### ||
+|| # Product Name: User Moderating Options                    Version: 1.2.0 # ||
+|| # License Number: Custom License                         $Revision: 138 $ # ||
+|| # ----------------------------------------------------------------------- # ||
+|| #                                                                         # ||
+|| #         Copyright ©2005-2008 PHP KingDom. Some Rights Reserved.         # ||
+|| #   This product may be redistributed in whole or significant part under  # ||
+|| #      "Creative Commons - Attribution-Noncommercial-Share Alike 3.0"     # ||
+|| #                                                                         # ||
+|| # ------------- 'User Moderating Options' IS FREE SOFTWARE -------------- # ||
+|| #        http://www.phpkd.net | http://go.phpkd.net/license/custom/       # ||
+|| ########################################################################### ||
+\*============================================================================*/
+
+
+Please remember to click "Mark as Installed" if you use this product to receive updates.
+
+
+Name: User Moderating Options
+
+Description: This product allows staff to edit user's avatar, profile picture, signature & album pictures inside forums without logging to AdminCP/ModCP, Administrators also has the ability to control which user groups allowed to manage others accounts.
+
+How it works:
+   * Simple:
+	o Under Construction ...
+   * Detailed:
+	o Under Construction ...
+
+
+Features:
+   * Specific Features:
+	o Under Construction ...
+
+   * Default Features:
+	o Under Construction ...
+
+
+Help Us:
+   * With your brilliant suggestions and ideas to develop this product.
+   * With your appreciated translations (translation credits go to their owners).
+
+
+Known Isues:
+   * None till now.
+
+
+History:
+   * v1.0.0 - ...
+   * v1.0.1 - ...
+   * v1.1.0 - ...
+   * v1.1.1 - ...
+   * v1.2.0 - ...
+   * Under Construction ...
+
+
+Notes:
+   1. Supported languages of this product are available as a translated products not as language files, the product's folder contains sub folders for languages, each one has the full package in that particular language (ie: English, Arabic ..).
+   2. This product is supposed to work with vBulletin 3.5.x & 3.6.x series, but we don't support versions prior 3.7.x series, Just 3.7.x Stable series!
+   3. Installing this product will automatically uninstall the first version of this product (1.0.x & 1.1.x series) with the different product ID ('phpkd_full_quickreply').
+
+
+Files Tree:
+   * Lang Name (i.e: English, Arabic ..)
+	o import
+	   + product-phpkd_usermo.xml
+	o readme
+	   + info.txt
+	   + license.txt
+	o screenshots
+	   + Screenshots ...
+	o upload
+	   + admincp
+		# usermolog.php
+	   + includes
+		# phpkd
+		   * usermo_functions.php
+		   * usermo_plugins.php
+		# xml
+		   * bitfield_phpkd_usermo.xml
+		   * cpnav_phpkd_usermo.xml
+		   * hooks_phpkd_usermo.xml
+		# functions_usermo_log.php
+		# md5_sums_phpkd_usermo.php
+
+
+Screen Shots:
+   * Available in the "Screenshots" folder.
+
+
+Technical Notes:
+   * Plugins: ...
+   * New Files: ...
+   * File Edits: ...
+   * New Templates: ...
+   * Template Edits: ...
+   * Auo Template Edits: ...
+   * New Database Tables: ...
+   * Database Alterations: ...
+   * New Phrases: ...
+   * New Options: ...
+   * Cron Jops: ...
+
+
+Installation Procedure:
+   * Upload the required files to it's appropriated places:
+	o admincp/usermolog.php
+	o includes/phpkd/usermo_functions.php
+	o includes/phpkd/usermo_plugins.php
+	o includes/xml/bitfield_phpkd_usermo.xml
+	o includes/xml/cpnav_phpkd_usermo.xml
+	o includes/xml/hooks_phpkd_usermo.xml
+	o includes/functions_usermo_log.php
+	o includes/md5_sums_phpkd_usermo.php
+   * Import the product file from your AdminCP (If upgrading "Allow Overwrite").
+   * Done.
+
+
+Upgrade Procedure:
+   * Un-do any previous file edits done for this product (It's better to restore the default vBulletin files).
+   * Follow the installation procedure for this version.
+
+
+Control:
+   * Cooming Soon ...
+
+
+At the end:
+   * Thanks to all of you for supporting us by installing our products.
+
+
+Other Mods:
+   * Cooming Soon ...
+     http://go.phpkd.net/somethinghere
+
+
+Hint:
+    * Please post your comments, suggestions, ideas for this product. We read all posts.
+    * Make sure you click INSTALL:
+      http://go.phpkd.net/install/phpkd_usermo
+      You will be contacted when a new version is released.
+
+
+
+Keep Moving Forward!
+
+/*============================================================================*\
+|| ########################################################################### ||
+|| # Version: 1.2.0
+|| # $Revision: 138 $
+|| # Released: $Date: 2008-11-09 15:49:44 +0200 (Sun, 09 Nov 2008) $
+|| ########################################################################### ||
+\*============================================================================*/

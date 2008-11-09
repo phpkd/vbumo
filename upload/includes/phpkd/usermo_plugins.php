@@ -21,7 +21,7 @@ if (!defined('VB_AREA'))
 }
 
 $hookobj =& vBulletinHook::init();
-require_once(DIR . '/includes/phpkd/phpkd_usermo_functions.php');
+require_once(DIR . '/includes/phpkd/usermo_functions.php');
 
 switch (strval($hookobj->last_called))
 {
